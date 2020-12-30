@@ -22,10 +22,13 @@ library(ggplot2) # za risanje grafov
 library(knitr) # lepši prikaz tabel
 library(gridExtra) # lepši prikaz tabel
 library(grid)
+library(foreign)
+library(MASS)
 library(lattice)
 library(multiUS) # npr. za izpis p-vrednosti
 library(rms)
-library(tidyverse) # rabimo
+library(tidyverse)
+library(reshape2)
 ```
 
 
@@ -48,6 +51,20 @@ Poleg tega bomo preverjali, če probleme kršenja predpostavk lahko (vsaj delno)
 *Tu predstaviva metode, ki jih uporabljava ali primerjava. Poudarek je na predpostavkah in ostalih značilnostih, ki jih preverjava.*
 
 ## Linearna regresija
+
+Linearna regresija je statistični model, ki ga lahko zapišemo v naslednji obliki: $Y=\beta X + \epsilon$, kjer je $\beta \in \mathbb{R}^k$ vektor regresijsih koeficientov, $X \in \mathbb{R}^{k \times n}$ matrika pojasnjevalnih spremenljivk in $Y\in \mathbb{R}^n$ vektor odvisnih spremenljivk.
+
+Predpostavke linearnega modela:
+
+- Ostanki so porazdeljeni normalno: $\epsilon \sim N(0,\sigma)$
+
+- Homogenost variance
+
+- 
+
+Minimiziramo vsoto kvadratov residualov: $\sum_{i=1}^n(Y_i-\hat{Y}_i)^2$
+
+POGLEJ V PREDMET EKONOMETRIJA!
 
 ## Posplošeni linearni modeli
 
@@ -97,6 +114,104 @@ Pri generiranju podatkov bomo spreminjali sledeče:
 Pri generiranju koreliranih gama spremenljivk uporabimo sledečo lastnost: Če $X_i \sim Gamma(k_i, \theta)$, potem je
 $$\sum_{i=1}^{n} X_i \sim Gamma(\sum_{i=1}^{n} k_i, \theta)$$
 
+
+```{r}
+# PREDLAGAM, DA KODO KAR V ISTI DOKUMENT PIŠEVA IN JO SKRIJEVA (DA NIMAVA POSEBNE DATOTEKE ZA SIMULACIJE) IN SAMO SHRANJUJEVA REZULTATE POSEBEJ, TAKO KOT SVA ŽE DELALI DRUGJE.
+
+st.ponovitev = 1000 # Število ponovitev simulacij
+n <- c(10,20,30,50,100,500,1000) # velikosti vzorcev
+b <- c(5,1,5,1,0) # vektor regresijskih utezi
+b <- c(3, 4)
+mu <- c(1,2) # vektor povprecij
+ro <- seq(0, 0.9, by=0.1) # korelacija med X1 in X2 (ta parameter spreminjamo)
+```
+
+```{r eval=FALSE}
+n=1000 # za sprobat
+# Generiranje pojasnjevalnih spremenljivk:
+x1 <- rgamma(n,0.2,5)
+x2 <- rgamma(n,0.2,5)
+x3 <- rgamma(n,0.2,5)
+x4 <- rgamma(n,0.2,5)
+x5 <- rgamma(n,0.2,5)
+x6 <- rgamma(n,0.2,5)
+x7 <- rgamma(n,0.2,5)
+x8 <- rgamma(n,0.2,5)
+x9 <- rgamma(n,0.2,5)
+x10 <- rgamma(n,0.2,5)
+x11 <- rgamma(n,0.2,5)
+x12 <- rgamma(n,0.2,5)
+x13 <- rgamma(n,0.2,5)
+x14 <- rgamma(n,0.2,5)
+x15 <- rgamma(n,0.2,5)
+x16 <- rgamma(n,1,5)
+x17 <- rgamma(n,1,5)
+x18 <- rgamma(n,1,5)
+x19 <- rgamma(n,1,5)
+x20 <- rgamma(n,1,5)
+x21 <- rgamma(n,1,5)
+x22 <- rgamma(n,1,5)
+x23 <- rgamma(n,1,5)
+x24 <- rgamma(n,1,5)
+x25 <- rgamma(n,1,5)
+x26 <- rgamma(n,1,5)
+x27 <- rgamma(n,1,5)
+x28 <- rgamma(n,1,5)
+x29 <- rgamma(n,1,5)
+x30 <- rgamma(n,1,5)
+
+# Ugotovti je treba, kakšna je korelacija med spremenljivkami, če seštevamo različne vrednosti parametra "k"
+x101 <- x1 + x2 + x3 + x4 + x5 + x6 + x7 + x8 + x9 + x10
+x102 <- x1 + x2 + x3 + x4 + x5 + x11 + x12 + x13 + x14 + x15
+x103 <- x1 + x2 + x3 + x4 + x5 + x16 + x17 + x18 + x19 + x20
+x104 <- x1 + x2 + x3 + x4 + x5 + x21 + x22 + x23 + x24 + x25
+x105 <- x1 + x2 + x3 + x4 + x5 + x26 + x27 + x28 + x29 + x30
+
+# Generiranje napak:
+epsilon <- rgamma(n,1,5)
+```
+
+
+```{r eval=FALSE}
+# Poglej Marjanovo kodo rešene DN, najbrž bo boljša (krajša)
+pokritostC <- matrix(NA, nrow=st.ponovitev, ncol=length(ro))
+sirinaC <- matrix(NA, nrow=st.ponovitev, ncol=length(ro))
+pokritostX1 <- matrix(NA, nrow=st.ponovitev, ncol=length(ro))
+sirinaX1 <- matrix(NA, nrow=st.ponovitev, ncol=length(ro))
+pokritostX2 <- matrix(NA, nrow=st.ponovitev, ncol=length(ro))
+sirinaX2 <- matrix(NA, nrow=st.ponovitev, ncol=length(ro))
+
+for (j in (1:length(ro))){
+  for (i in (1:st.ponovitev)){
+    Sigma <- matrix(ro[j], nrow = 2, ncol = 2) # korelacijska matrika
+    diag(Sigma) <- 1 # spremenljivka je sama s sabo popolnoma korelirana
+    X <- mvrnorm(n = n, mu = mu, Sigma = Sigma) # generiramo pojasnjevalne spremenljivke
+    Y <- (X %*% b) + rnorm(n = n, mean = 0, sd = 1) # generiramo odvisno spr. z napakami
+    fit <- lm(Y ~ X) # izvedemo linearno regresijo
+    ci <- confint(fit) # interval zaupanja
+    
+    # Shranimo rezultate:
+    pokritost1 <- (c(0,b)>ci[,1]) & (c(0,b)<ci[,2]) # pokritost
+    pokritostC[i,j] <- pokritost1[1]
+    pokritostX1[i,j] <- pokritost1[2]
+    pokritostX2[i,j] <- pokritost1[3]
+    sirina1 <- ci[,2] - ci[,1] # sirina IZ
+    sirinaC[i,j] <- sirina1[1]
+    sirinaX1[i,j] <- sirina1[2]
+    sirinaX2[i,j] <- sirina1[3]
+  }
+}
+
+# Shranimo dobljene vrednosti (ker so simulacije precej zamudne):
+dump("pokritostC", file="pokritostC.R")
+dump("pokritostX1", file="pokritostX1.R")
+dump("pokritostX2", file="pokritostX2.R")
+dump("sirinaC", file="sirinaC.R")
+dump("sirinaX1", file="sirinaX1.R")
+dump("sirinaX2", file="sirinaX2.R")
+```
+
+
 # Predstavitev rezultatov
 
 *Predstavitev rezultatov (samo grafično ni dovolj, potrebno je še analizirati varianco na rezultatih).*
@@ -104,6 +219,10 @@ $$\sum_{i=1}^{n} X_i \sim Gamma(\sum_{i=1}^{n} k_i, \theta)$$
 # Ugotovitve
 
 # Viri
+
+- M. Raič, *O linearni regresijji*, 2014. Najdeno na spletnem naslovu:
+[Linearna regresija](http://valjhun.fmf.uni-lj.si/~raicm/Odlomki/Linearna_regresija.pdf)
+
 
 # Priloge
 
