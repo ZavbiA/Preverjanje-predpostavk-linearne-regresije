@@ -52,19 +52,41 @@ Poleg tega bomo preverjali, če probleme kršenja predpostavk lahko (vsaj delno)
 
 ## Linearna regresija
 
-Linearna regresija je statistični model, ki ga lahko zapišemo v naslednji obliki: $Y=\beta X + \epsilon$, kjer je $\beta \in \mathbb{R}^k$ vektor regresijsih koeficientov, $X \in \mathbb{R}^{k \times n}$ matrika pojasnjevalnih spremenljivk in $Y\in \mathbb{R}^n$ vektor odvisnih spremenljivk.
+Linearna regresija je statistični model, ki ga lahko zapišemo v naslednji obliki: $$Y=\beta X + \epsilon$$, kjer je $\beta \in \mathbb{R}^k$ vektor regresijsih koeficientov, $X \in \mathbb{R}^{k \times n}$ matrika pojasnjevalnih spremenljivk in $Y\in \mathbb{R}^n$ vektor odvisnih spremenljivk.
 
-Predpostavke linearnega modela:
+Najpomembnejše in najpogosteje navedene predpostavke linearnega modela:
 
 - Ostanki so porazdeljeni normalno: $\epsilon \sim N(0,\sigma)$
 
 - Homogenost variance
 
-- 
+
+
+Verbič navaja naslednje predpostavke metode najmanjših kvadratov:
+
+- linearnost regresijskega modela: $y=\beta_1+\beta_2x_i+u_i$
+
+- ničelna povprečna vrednost $u_i$: $E(u_i)=0$
+
+- homoskedastičnost: $Var(u_i)=E(u_i^2)=\sigma^2$
+
+- Odsotnost avtokorelacije: $cov(e_i, e_j|x_i, x_j)=0; i\ne j$
+
+- nekoreliranost med pojasnjevalnimi spremenljivkami in slučajno spremenljivko $u$: $Cov(x_2,u)=Cov(x_3,u)=...=Cov(x_k,u)=0$
+
+- število opazovanj mora presegati število ocenjenih parametrov oz. pojasnjevalnih spremenljivk: $n>k$
+
+- $Var(X)$ je končno pozitivno število
+
+- pravilno specificiran regresijski model: vključene vse relevantne pojasnjevalne spremenljivke in izbrana ustrezna funkcijska oblika modela
+
+- odsotnost popolne multikolinearnosti: $\lambda_1X_1+\lambda_2X_2+...+\lambda_kX_k=0$
+
+- slučajna spremenljivka $u$ je normalno porazdeljena: $u_i \sim N(0,\sigma_i^2)$.
+Posledično je odvisna spremenljivka $y$ tudi normalno porazdeljena s.s.: $y_i \sim N(\beta_1x_{1i}+...+\beta_kx_{ki},\sigma_i^2)$
 
 Minimiziramo vsoto kvadratov residualov: $\sum_{i=1}^n(Y_i-\hat{Y}_i)^2$
 
-POGLEJ V PREDMET EKONOMETRIJA!
 
 ## Posplošeni linearni modeli
 
@@ -223,6 +245,7 @@ dump("sirinaX2", file="sirinaX2.R")
 - M. Raič, *O linearni regresijji*, 2014. Najdeno na spletnem naslovu:
 [Linearna regresija](http://valjhun.fmf.uni-lj.si/~raicm/Odlomki/Linearna_regresija.pdf)
 
+- M. Verbič, L. Pfajfar, R. Rogelj, *Ekonometrični obrazci in postopki: Dopolnjena druga izdaja*. Ljubljana: Ekonomska fakulteta, 2017. [ISBN 9789612403157]
 
 # Priloge
 
