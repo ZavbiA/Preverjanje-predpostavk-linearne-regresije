@@ -31,7 +31,6 @@ library(tidyverse)
 library(reshape2)
 ```
 
-
 \pagebreak
 
 # Uvod
@@ -41,28 +40,88 @@ Preverjali bomo vpliv različnih dejavnikov na pristranost in širino intervalov
 Za izračun intervalov zaupanja bomo uporabili različne metode, ki smo jih spoznali v poglavjih simulacij in metod samovzorčenja. Tako bomo primerjali pokritosti in širine različno ocenjenih intervalov zaupanja.
 Poleg tega bomo preverjali, če probleme kršenja predpostavk lahko (vsaj delno) odpravimo z uporabo posplošenih modelov.
 
-# Pričakovanja
+*Treba je še zapisat, kakšne rezultate pričakujeva. Najbolje, da kar tu narediva še en odstavek. Razmislit je potrebno tudi, kako bi se dalo rezultate izboljšati.*
 
-*Nekam je treba zapisat, kakšne rezultate pričakujeva, ni pa nujno, da je to svoje poglavje.*
-*Razmislit je potrebno tudi, kako bi se dalo rezultate izboljšati.*
-
-# Obravnavane metode
+# Teoretični del
 
 *Tu predstaviva metode, ki jih uporabljava ali primerjava. Poudarek je na predpostavkah in ostalih značilnostih, ki jih preverjava.*
 
+Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. Najprej so bolj splošno predstavljeni posplošeni linearni modeli, nato pa podrobneje model linearne regresije in metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente. V zadnjem delu tega poglavja so predstavljeni načini za izračun intervalov zaupanja regresijskih koeficientov.
+
+## Posplošeni linearni modeli
+
+Posplošeni linearni mešani model izrazimo kot $$Y=X\beta+Z\alpha+\epsilon,$$ kjer je $Y$ opazovani slučajni vektor, $X$ matrika znanih vrednosti pojasnjevalnih spremenljivk, $\beta$ neznan vektor regresijskih koeficientov (fiksni učinki), $Z$ znana matrika, $\alpha$ vektor naključnih učinkov in $\epsilon$ vektor napak. $\alpha$ in $\epsilon$ sta neopazovana. Predpostavimo, da sta nekorelirana.
+
+V matrični obliki model izgleda takole: $$
+\begin{bmatrix}
+Y_{1} \\
+Y_{2} \\
+\vdots \\
+Y_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+X_{1,1} & X_{1,2} & \dots & X_{1,p} \\
+X_{2,1} & X_{2,2} & \dots & X_{2,p} \\
+\vdots & \vdots &  & \vdots \\
+X_{n,1} & 0 & \dots & X_{n,p}
+\end{bmatrix}
+\begin{bmatrix}
+\beta_{1} \\
+\beta_{2} \\
+\vdots \\
+\beta_{p}
+\end{bmatrix}
++
+\begin{bmatrix}
+Z_{1,1} & Z_{1,2} & \dots & Z_{1,q} \\
+Z_{2,1} & Z_{2,2} & \dots & Z_{2,q} \\
+\vdots & \vdots &  & \vdots \\
+Z_{n,1} & Z_{n,2} & \dots & Z_{n,q}
+\end{bmatrix}
+\begin{bmatrix}
+\alpha_{1} \\
+\alpha_{2} \\
+\vdots \\
+\alpha_{q}
+\end{bmatrix}
++
+\begin{bmatrix}
+\epsilon_{1} \\
+\epsilon_{2} \\
+\vdots \\
+\epsilon_{n}
+\end{bmatrix}
+.$$
+
+Linearni mešani modeli se delijo na Gaussove ali normalne in ne-Gaussove.
+Pomembna predpostavka pri normalnih linearnih mešanih modelih je normalna porazdeljenost vektorja slučajnih učinkov $\alpha \sim N(0,\sigma^2 I_q)$ in vektorja slučajnih odstopanj $\epsilon \sim N(0,\tau^2 I_n)$, ki nista nujno enakih razsežnosti. Druga pomembna predpostavka je neodvisnost slučajnih vektorjev $\alpha$ in $\epsilon$. Prednost uporabe nenormalnih linearnih mešanih modelov pred normalnimi je v tem, da so bolj fleksibilni za modeliranje. Uporabni so na mnogo različnih področjih (npr. v medicini, financah, izobraževanju,...). Za modeliranje pridejo prav, kadar so meritve na testirancih opravljene večkrat skozi neko časovno obdobje
+(Maver, 2018, str. 6).
+
 ## Linearna regresija
 
-Linearna regresija je statistični model, ki ga lahko zapišemo v naslednji obliki: $$Y=\beta X + \epsilon$$, kjer je $\beta \in \mathbb{R}^k$ vektor regresijsih koeficientov, $X \in \mathbb{R}^{k \times n}$ matrika pojasnjevalnih spremenljivk in $Y\in \mathbb{R}^n$ vektor odvisnih spremenljivk.
+Linearna regresija je statistični model, ki ga v osnovni obliki lahko zapišemo kot:
+$$Y_{i} = \beta_{0} + \beta_{1} x_{i} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ med seboj neodvisne slučajne spremenljivke, $x_{i}$ pa dane vrednosti.
+Velja $\epsilon_{i} \sim N(0, \sigma^{2})$ za vsak $i$ in tako $Y_{i} \sim N(\beta_{0} + \beta_{1}x_{i},\ \sigma^{2})$. Model lahko razširimo na več linearnih parametrov: $$Y_{i} = \beta_{0} + \beta_{1} x_{i1} + \dots +\beta_{p} x_{ip} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ neodvisne enako porazdeljene slučajne spremenljivke, za $1\leq i\leq n$.
 
-Najpomembnejše in najpogosteje navedene predpostavke linearnega modela:
+Lahko ga zapišemo tudi v matrični obliki: $$Y = X \beta + \epsilon.$$
 
-- Ostanki so porazdeljeni normalno: $\epsilon \sim N(0,\sigma)$
+V tem modelu je predpostavljeno, da so regresijski koeficienti fiksni, obstajajo pa primeri, v katerih je smiselno predvidevati, da so nekateri izmed koeficientov naključni (Jiang, 2007, str. 1).
 
-- Homogenost variance
+Ključne predpostavke linearnega modela (Correlation and regression with R, 2016) so naslednje:
+
+1.) Normalna porazdelitev: za katerokoli vrednost $X$ je $Y$ porazdeljena normalno.
+
+Pri tej predpostavki ponavadi navajamo normalno porazdeljenost ostankov. Če velja $\epsilon \sim N(0,\sigma)$, iz tega sledi $Y\sim N(,\sigma)$
+
+2.) Homogenost variance (homoskedastičnost): varianca residualov je enaka za vse vrednosti $X$;
+
+3.) Linearna zveza med pojasnjevalno spremenljivko $X$ in povprečjem odzivne spremenljivke $Y$;
+
+4.) Opazovanja so med seboj neodvisna.
 
 
-
-Verbič navaja naslednje predpostavke metode najmanjših kvadratov:
+Pfajfar (2018) navaja naslednje predpostavke metode najmanjših kvadratov:
 
 - linearnost regresijskega modela: $y=\beta_1+\beta_2x_i+u_i$
 
@@ -85,12 +144,101 @@ Verbič navaja naslednje predpostavke metode najmanjših kvadratov:
 - slučajna spremenljivka $u$ je normalno porazdeljena: $u_i \sim N(0,\sigma_i^2)$.
 Posledično je odvisna spremenljivka $y$ tudi normalno porazdeljena s.s.: $y_i \sim N(\beta_1x_{1i}+...+\beta_kx_{ki},\sigma_i^2)$
 
-Minimiziramo vsoto kvadratov residualov: $\sum_{i=1}^n(Y_i-\hat{Y}_i)^2$
 
+Prva metoda, ki jo lahko uporabimo pri modeliranju v programskem jeziku $R$, je metoda najmanjših kvadratov (MNK), ki je najbolj enostavna. Nato bom opisala metodo največjega verjetja (MNV) in restringirano metodo največjega verjetja (RMNV), ki je bila razvita zaradi pomanjkljivosti prejšnje.
+Pri obeh standardnih metodah (MNV in RMNV) ločimo dva načina ocenjevanja in sicer točkovno ocenjevanje (za majhen vzorec) in ocenjevanje z asimptotično kovariančno matriko (za velike vzorce). V delu bom metodi predstavila le za točkovno ocenjevanje.
+V primeru osnovnega modela linearne regresije sta oceni koeficientov po metodah MNK in MNV ekvivalentni, če predpostavimo normalno porazdelitev $\epsilon$ in $\alpha$.
 
-## Posplošeni linearni modeli
+## Metoda najmanjših kvadratov (MNK)
+Pri 16 letih jo je odkril nemški matematik Carl F. Gauss. Zaradi svojih lastnosti je najbolj razširjena metoda ocenjevanja regresijskih koeficientov
+(Pfajfar, 2018, str.53).
 
-*Treba je raziskat funkcijo `glm()`. Naj bi bila fajn, ker lahko za napake nastavimo kakšno drugo porazdelitev (tako je rekel profesor).*
+Pri MNK na primeru osnovnega regresijskega modela velikosti $p=1$ iščemo $\beta_{0}$ in $\beta{1}$ tako, da bo vsota kvadratov ostankov najmanjša možna. Pri danih $(x_{i}, y_{i})$ torej iščemo $$\min_{\beta_{0}, \beta_{1}} \sum_{i=1}^{n} (y_{i} - \beta_{0} - \beta_{1}x_{i})^{2}.$$
+
+## Metoda največjega verjetja (MNV)
+Naj bodo $X_{1}, ... , X_{n}$ n.e.p. s.s., porazdeljene z gostoto $f_{Y} (x;\ \theta_{1}, \dots , \theta_{k})$.
+Funkcijo $$L(\theta;\ x) = L(\theta_{1}, \dots , \theta_{k};\ x_{1}, \dots , x_{n}) = \prod_{i=1}^n f_{Y} (x_{i};\ \theta_{1}, \dots , \theta_{k})$$ imenujemo funkcija verjetja za vzorec velikosti $n$.
+
+Za vsak vzorec $x$ naj bo $\hat{\theta}(x)$ vrednost parametra, v katerem funkcija $L$ doseže maksimum. Cenilka po MNV za parameter $\theta$ na osnovi vzorca $X$ je $\hat{\theta}(X)$. Ta cenilka je pod ustreznimi predpostavkami dosledna, vendar ne nujno nepristranska.
+
+MNV ima asimptotsko najmanjšo varianco (je učinkovita), kar sledi kot posledica neenakosti Cram\'{e}r-Raa. V primeru diskretne porazdelitve je verjetje kar produkt verjetnosti: $$L(x;\ \theta) = \prod_{i=1}^n P(X_{i} = x_{i};\ \theta).$$
+
+Gaussov linearni mešani model lahko predstavimo z njegovo marginalno porazdelitvijo. Tako je Y porazdeljen kot $$Y \sim N(X\beta, V),$$ 
+kjer je $V=R+ZGZ^T$ ter $R=\text{diag}(R_1,...,R_n)$, $G=\text{diag}(G_1,...,G_n)$ in $Z=\text{diag}(Z_1,...,Z_n)$.
+Vektor $\theta=(R_1,...,R_n,G_1,...,G_n)$ predstavlja vektor vseh variančnih komponent, vključenih v $V$.
+V nadaljevanju je predstavljena izpeljava cenilke po MNV, kjer $y$ in $Y$ označujejo vektorje.
+
+Porazdelitev slučajnega vektorja $Y$ je dana z gostoto $$f(y) = \frac{1}{(2\pi)^\frac{n}{2} {\lvert V \rvert}^\frac{1}{2}}e^{-\frac{1}{2}(y-X\beta)^{T}V^{-1}(y-X\beta)},$$ kjer je $n$ dimenzija $Y$.
+Torej je logaritmirana funkcija verjetja enaka $$l(\beta, \theta) = c - \frac{1}{2}\text{log}(\lvert V \rvert) - \frac{1}{2}(y-X\beta)^{T}V^{-1}(Y-X\beta),$$ kjer je $c$ neka konstanta.
+Ko odvajamo po parametru $\beta$, dobimo $$\frac{\partial l}{\partial \beta} = X^{T}V^{-1}Y - X^{T}V^{-1}X\beta.$$
+Odvod po komponenti vektorja $\theta$ pa je enak  $$\frac{\partial l}{\partial \theta_r} =\frac{1}{2}\{ (Y-X\beta)^{T}V^{-1}\frac{\partial V}{\partial \theta_r}V^{-1}(Y-X\beta)-sled(V^{-1}\frac{\partial V}{\partial \theta_r}) \}, r=1,...,q,$$
+kjer je $\theta_r$ $r$-ta komponenta vektorja $\theta=(R_1,...,R_n,G_1,...,G_n)$. Le ta je dimenzije $q$.
+
+Cenilka bo rešitev vektorskih enačb $$\frac{\partial l}{\partial \beta} = 0, \frac{\partial l}{\partial \theta} = 0.$$
+Dobljena cenilka za vektor koeficientov po MNV je
+$$\hat{\beta} = (X^{T}\hat{V}^{-1}X)^{-1}X^{T}\hat{V}^{-1}Y.$$
+Podrobnejšo izpeljavo z vsemi potrebnimi predpostavkami je v svojem delu predstavil Jiang
+(Jiang, 2007).
+
+Da še malo poenostavimo, poglejmo primer osnovnega modela linearne regresije v matrični obliki $Y=X\beta + \epsilon$, kjer so
+
+$$\begin{bmatrix}
+X_{1,1} & X_{1,2} & \dots & X_{1,p} \\
+X_{2,1} & X_{2,2} & \dots & X_{2,p} \\
+\vdots & \vdots &  & \vdots \\
+X_{n,1} & 0 & \dots & X_{n,p}
+\end{bmatrix}
+,
+\begin{bmatrix}
+Y_{1} \\
+Y_{2} \\
+\vdots \\
+Y_{n}
+\end{bmatrix}
+,
+\begin{bmatrix}
+\beta_{1} \\
+\beta_{2} \\
+\vdots \\
+\beta_{p}
+\end{bmatrix}
+.$$
+Tu je matrika $X$ dimenzije $n \times (p+1)$ in $p$ število spremenljivk. Predpostavimo, da je matrika $X$ polnega ranga in velja $$\epsilon \sim N(0, \sigma^{2}I_{n\times n}).$$
+Cenilka, dobljena po MNV, je $$\hat{\beta} = (X^{T}X)^{-1}X^{T}Y.$$
+Ta cenilka je nepristranska, saj velja $$E(\hat{\beta}) = E((X^{T}X)^{-1}X^{T}Y) = (X^{T}X)^{-1}X^{T}E(Y) = (X^{T}X)^{-1}X^{T}X\beta = \beta.$$
+Izpeljava variančno-kovariančne matrike:
+$$var(\hat{\beta}) = var((X^{T}X)^{-1}X^{T}Y) = (X^{T}X)^{-1}X^{T}var(Y)X(X^{T}X)^{-1} = $$
+$$=(X^{T}X)^{-1}X^{T}\sigma^{2}I_{n\times n}X(X^{T}X)^{-1}  =\sigma^{2}(X^{T}X)^{-1}.$$
+Velja $$\frac{\hat{\beta_{i}}-\beta_{i}}{\sqrt{\sigma^{2}(X^{T}X)_{ii}^{-1}}}\sim N(0,1).$$
+\\
+
+V primeru, ko je $p=1$, je ocena regresijskega koeficienta $\beta_{1}$ po metodah MVN in MNK enaka
+$$\hat{\beta_{1}} = \frac{\sum_{i=1}^{n}(x_{i}-\overline{x})(y_i-\overline{y})}{\sum_{i=1}^{n}(x_{i}-\overline{x})^{2}}.$$
+
+## Restringirana metoda največjega verjetja (RMNV)
+
+Zaradi pomanjkljivosti metode največjega verjetja se je razvila restringirana metoda največjega verjetja. Ta ima več prednosti pred MNV, med drugim omogoča pridobivanje cenilk zgolj za parametre, ki so predmet zanimanja in se ne ozira na nezanimive parametre. Cenilke, dobljene po RMNV, so invariantne za fiksne učinke modela, metoda pa le-teh niti ne ocenjuje (Maver, 2018, str.17).
+
+Poglejmo še podrobnejši opis RMNV, povzet po obsežnejši literaturi (Jiang, 2007). Naj bo $Y \sim N(X\beta, V)$. Brez škode za splošnost naj bo izpolnjena predpostavka, da ima matrika $X \in R ^{m \times p}$ poln rang, torej rang$(X) = p$. Naj bo $A$ taka matrika dimenzije $m \times (m-p)$, za katero velja rang$(A) = m-p$ in $A^T X = 0$. Za potrebe izpeljave naj bo $Z = A^T Y.$ Velja:
+$E(A^T Y ) = A^T X\beta = 0$, $Var(A^T Y ) = A^T V A \Rightarrow Z \sim N(0,A^T V A)$.
+Sledi, da je zvezna porazdelitvena gostota slučajne spremenljivke $Z$ dana kot
+$$f_{Z,R}(z) =\frac{1}{(2\pi )^{(m-p)/2}|A^T VA|^{1/2}} e^{-\frac{1}{2}z^T (A^T V A)^{-1}z}.$$
+Indeks $R$ tu označuje, da gre za restringirano metodo. Restringirana logaritmirana funkcija verjetja je
+\begin{equation}
+l_R(\theta) = c - \frac{1}{2}\text{log}(|A^T VA|) - \frac{1}{2} Z^T (A^T VA)^{-1}Z,
+\end{equation}
+kjer je $c$ konstanta. Z odvajanjem pa dobimo
+$$\frac{\partial l_R}{\partial \theta_i}=\frac{1}{2}\{ Y^T P \frac{\partial V}{\partial \theta_i} PY - sled(P\frac{\partial V}{\partial \theta_i}) \}, i=1,...,q.$$
+Tu je $P=A(A^T VA)^{-1}A^T.$
+Cenilka po restringirani metodi največjega verjetja je definirana kot točka, v kateri funkcija (1) zavzame maksimum. Dobi se jo kot rešitev enačbe $\frac{\partial l_R}{\partial \theta} = 0$ (Jiang, 2007, str. 13).
+RMNV je torej metoda, s katero se direktno ne pridobi cenilke parametra $\beta$, pač pa le cenilko parametra $\theta$. Razlog je v tem, da se $\beta$ izloči že pred ocenjevanjem. Cenilko za $\beta$ se dobi iz enačbe $V=V(\hat{\theta})$, kjer je $\hat{\theta}$ cenilka za $\theta$, dobljena z RMNV.
+Izpeljave in podrobnejšo razlago metode lahko pogledamo v (Jiang, 2007).
+
+## Funkcija glm()
+
+V linearnem modelu $Y_i = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip} + \epsilon_{i}$ velja
+$E(Y_i) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$. Slednjo enačbo lahko z uporabo primerno definirane funkcije $g$ posplošimo do $$g(E(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}.$$ Tu z indeksom $i$ označujemo i-tega posameznika. Prejšnja enačba je poseben primer, kjer je $g$ identiteta.
+Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahko generiramo več posplošenih linearnih modelov. Prednost te funkcije je tudi v tem, da lahko poleg normalne porazdelitve nastavimo še katero drugo porazdelitev ostankov.
 
 ## Bootstrap?
 
@@ -104,6 +252,7 @@ Minimiziramo vsoto kvadratov residualov: $\sum_{i=1}^n(Y_i-\hat{Y}_i)^2$
 
 - obrnjeni
 
+*Na prosojnicah so zapisane glavne značilnosti posameznih IZ. Najbrž je dovolj, če zapiševa zelo na kratko*
 
 # Generiranje podatkov
 
@@ -242,12 +391,26 @@ dump("sirinaX2", file="sirinaX2.R")
 
 # Viri
 
-- M. Raič, *O linearni regresijji*, 2014. Najdeno na spletnem naslovu:
+*Sproti navajaj vsaj linke, da potem na koncu samo urediva in jih pravilno navedeva*
+
+- V. Maver, \emph{Normalni linearni mešani modeli}, diplomsko delo, Fakulteta za matematiko in fiziko, Univerza v Ljubljani, 2018.
+
+- J. Jiang, \emph{Linear and Generalized Linear Mixed Models and Their Applications}, Springer Series in Statistics, Springer Science + Business Media, LLC, New York, 2007.
+
+- D. Bates et al., \emph{Package 'lme4'}, v: Linear Mixed-Effects Models using 'Eigen' and S4, [ogled 4.6.2019], dostopno na \url{https://cran.r-project.org/web/packages/lme4/lme4.pdf}.
+
+- \emph{lme}, v: RDocumentation, [ogled 15.5.2019], dostopno na \url{https://www.rdocumentation.org/packages/nlme/versions/3.1-137/topics/lme}.
+
+- \emph{glm}, v: RDocumentation, [ogled 15.5.2019], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.0/topics/glm}.
+
+- M. Raič, \emph{O linearni regresijji}, 2014. Najdeno na spletnem naslovu:
 [Linearna regresija](http://valjhun.fmf.uni-lj.si/~raicm/Odlomki/Linearna_regresija.pdf)
 
-- M. Verbič, L. Pfajfar, R. Rogelj, *Ekonometrični obrazci in postopki: Dopolnjena druga izdaja*. Ljubljana: Ekonomska fakulteta, 2017. [ISBN 9789612403157]
+- L. Pfajfar, \emph{Osnovna ekonometrija}, učbeniki Ekonomske fakultete, Ljubljana, 2018.
+
+- [Correlation and regression with R](https://sphweb.bumc.bu.edu/otlt/MPH-Modules/BS/R/R5_Correlation-Regression/R5_Correlation-Regression4.html)
 
 # Priloge
 
-*Rmd datoteka s kodo, ali pa če kar dava povezavo na github repozitorij*
+*Rmd datoteka s kodo, ali pa če dava kar povezavo na github repozitorij*
 
