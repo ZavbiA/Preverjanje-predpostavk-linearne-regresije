@@ -120,6 +120,10 @@ Pri tej predpostavki ponavadi navajamo normalno porazdeljenost ostankov. Če vel
 
 4.) Opazovanja so med seboj neodvisna.
 
+5.) Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Na multikolinearnost posumimo, če se v modelu determinacijski koeficient izkaže za statistično značilnega, od regresijskih koeficientov pa nobeden.
+
+6.) Medsebojna neodvisnost vrednosti slučajne spremenljivke $\epsilon$ prav tako spada med temeljne predpostavke linearnega regresijskega modela. Pravimo, da spremeneljivke niso avtokorelirane oz. da v modelu ni avtokorelacije. To predpostavko zapišemo $Cov(\epsilon_{i},\epsilon_{j}) = 0$ za vsak $i\ne j$ (Pfajfar, 2018).
+
 
 Pfajfar (2018) navaja naslednje predpostavke metode najmanjših kvadratov:
 
