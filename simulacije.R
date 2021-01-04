@@ -58,15 +58,15 @@ gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # 
 # SIMULACIJE --------------------------------------------------------------
 
 # stevilo vzorcev v simulacijah
-m <- 10
+m <- 1000
 
 # korelacije, ki jih bomo upostevali
 korelacija <- seq(from = 0, to = 0.9, by = 0.3)
 # parametri za asimetricnost napak, ki jih bomo upostevali
-alpha <- seq(from = 1, to = 5, by = 1)
+alpha <- seq(from = 1, to = 5, by = 2)
 # velikosti vzorcev, ki jih bomo upostevali
 n <- c(10, 50, 100, 500, 1000)
-alpha_X = c(1,5)
+alpha_X = c(2,5)
 
 # simulacije 
 zasnova <- expand.grid(korelacija, alpha, n, alpha_X)
@@ -95,7 +95,7 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   diag(corr_mtx) = 1
   X <- rmvgamma(n = n, shape=alpha_X, rate = 5, corr = corr_mtx)
   eps_noscaled <- rgamma(n = n, shape = alpha, rate = 5)
-  Y <- (X %*% b) + gammaScale2(eps_noscaled, shape = alpha, rate = 5)
+  Y <- 1 + (X %*% b) + gammaScale2(eps_noscaled, shape = alpha, rate = 5) # dodamo konstanto, sicer so problemi
   
   # izvedemo linearno regresijo z LM in izračunamo intervale zaupanja, enako z GLM 
   model_ols <- lm(Y ~ X)
