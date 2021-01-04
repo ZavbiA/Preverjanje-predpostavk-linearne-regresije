@@ -2,23 +2,24 @@ library("MASS")
 library("sjstats")
 library("doRNG")
 library("parallel")
-library("doParallel")
+# library("doParallel")
 library("reshape2")
 library("ggplot2")
 library("see")
 library("effectsize")
 
 # install.packages("lcmix", repos="http://R-Forge.R-project.org") # Dependancies: nnls,  matrixStats, R.methodsS3
+# install.packages("nnls","matrixStats","R.methodsS3")
 library("lcmix")
 # # generiramo en set podatkov
 # # pojasnjevalne spremenljivke
 # # GENERIRANJE ENEGA PRIMERA SETA PODATKOV
 # 
 # # Ostanki bodo porazdeljeni Gamma(shape,rate) zato potrebujemo funkcije za standardizacijo
-# gammaMean <- function(shape, rate) return(shape/rate)
-# gammaVar <- function(shape, rate) return(shape/rate**2)
-# gammaScale <- function(x, shape, rate) return((x-gammaMean(shape, rate))/sqrt(gammaVar(shape, rate)))
-# gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # Samo delimo z std odklonom
+gammaMean <- function(shape, rate) return(shape/rate)
+gammaVar <- function(shape, rate) return(shape/rate**2)
+gammaScale <- function(x, shape, rate) return((x-gammaMean(shape, rate))/sqrt(gammaVar(shape, rate)))
+gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # Samo delimo z std odklonom
 # 
 # 
 # # koralacija pojsnjevalnih spremenljivk
@@ -55,7 +56,7 @@ library("lcmix")
 # SIMULACIJE --------------------------------------------------------------
 
 # stevilo vzorcev v simulacijah
-m <- 50
+m <- 10
 
 # korelacije, ki jih bomo upostevali
 korelacija <- seq(from = 0, to = 0.9, by = 0.3)
@@ -78,9 +79,8 @@ cl <- makeCluster(no_cores)
 
 # PARALELNA SIMULACIJA za OLS
 registerDoParallel(cl)
-simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lcmix")) %dorng% {
+simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lcmix", "dplyr", "MASS")) %dorng% {
   # uvozimo parametre 
-  # ta del niti ni potreben, a je zaradi njega koda morda bolj pregledna
   n <- zasnova[i, "n"]
   r <- zasnova[i, "korelacija"]
   alpha <- zasnova[i, "alpha"]
@@ -95,11 +95,10 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   # izvedemo linearno regresijo z LM in izračunamo intervale zaupanja, enako z GLM 
   model_ols <- lm(Y ~ X)
   ci_ols <- confint(model_ols)
-  model_glm <- glm(Y ~ X, family = Gamma())
-  ci_glm <- confint(model_glm)
+  model_glm <- glm(Y ~ X, family = Gamma(link=log))
+  ci_glm <-  tryCatch(confint(model_glm), error = function(c) {confint.default(model_glm)}) 
   
   # izracunamo pokritost intervalov zaupanja in sirine intervalov zaupanja
-
   results_ols <- c("n" = n, 
                    "korelacija" = r, 
                    "alpha" = alpha ,
@@ -142,6 +141,8 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                    "B3" = as.numeric(model_glm[[1]][4] - b[3]),
                    "B4" = as.numeric(model_glm[[1]][4] - b[4]),
                    "B5" = as.numeric(model_glm[[1]][6] - b[5]))
+  
+  # združimo rezultate
   results_i <- rbind(results_ols, results_glm) %>% as.data.frame()
   results_i$model <- c("ols", 'gls')
   results_i
@@ -156,41 +157,40 @@ dump("simulacija", file="rezultati_simulacije.R")
 # pokritost
 pokritost <- c("pokritost_B0", "pokritost_B1", "pokritost_B2", "pokritost_B3", "pokritost_B4", "pokritost_B5")
 MeltedData <- melt(as.data.frame(simulacija), id.vars = c("model","korelacija", "alpha", "n"), measure.vars = pokritost)
-MeltedData$value <- MeltedData$value %>% as.logical() %>% as.integer()
 
 ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
-  facet_grid(n~korelacija) +
+  facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije (shape)", y = "pokritost IZ")
 
 # sirina intervalov zaupanja
-sirina <- c("sirina_B0", "sirina_B1", "sirina_B2")
-MeltedData <- melt(as.data.frame(simulacija), id.vars = c("korelacija", "shape1", "n"), measure.vars = sirina)
-ggplot(MeltedData, aes(x = shape1, y = value, col = variable)) +
-  facet_grid(n~korelacija) +
+sirina <- c("sirina_B0", "sirina_B1", "sirina_B2", "sirina_B3", "sirina_B4", "sirina_B5")
+MeltedData <- melt(as.data.frame(simulacija), id.vars = c("model","korelacija", "alpha", "n"), measure.vars = sirina)
+ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+  facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (shape1)", y = "sirina IZ")
+  labs(x = "stopnja asimetrije (alpha)", y = "sirina IZ")
 
 # pristranskost
-pristranskost <- c("B0", "B1", "B2")
-MeltedData <- melt(as.data.frame(simulacija), id.vars = c("korelacija", "shape1", "n"), measure.vars = pristranskost)
-ggplot(MeltedData, aes(x = shape1, y = value, col = variable)) +
-  facet_grid(n~korelacija) +
+pristranskost <- c("B0", "B1", "B2", "B3", "B4", "B5")
+MeltedData <- melt(as.data.frame(simulacija), id.vars = c("model", "korelacija", "alpha", "n"), measure.vars = pristranskost)
+ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+  facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (shape1)", y = "pristranskost")
+  labs(x = "stopnja asimetrije (alpha)", y = "pristranskost")
 
 # statisticna analiza
-model <- aov(pokritost_B1 ~ as.factor(korelacija) * as.factor(shape1) * as.factor(n), data = as.data.frame(rez))
+model <- aov(pokritost_B1 ~ as.factor(korelacija) * as.factor(alpha) * as.factor(n) * as.factor(model), data = as.data.frame(simulacija))
 summary(model)
 plot(eta_squared(model))
 
-model <- aov(sirina_B1 ~ as.factor(korelacija) * as.factor(shape1) * as.factor(n), data = as.data.frame(rez))
+model <- aov(sirina_B1 ~ as.factor(korelacija) * as.factor(alpha) * as.factor(n) * as.factor(model), data = as.data.frame(simulacija))
 summary(model)
 plot(eta_squared(model))
 
-model <- aov(B1 ~ as.factor(korelacija) * as.factor(shape1) * as.factor(n), data = as.data.frame(rez))
+model <- aov(B1 ~ as.factor(korelacija) * as.factor(alpha) * as.factor(n) * as.factor(model), data = as.data.frame(simulacija))
 summary(model)
 plot(eta_squared(model))
