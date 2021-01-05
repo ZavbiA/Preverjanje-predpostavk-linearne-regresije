@@ -229,7 +229,7 @@ Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahk
 
 ## Ocenjevanje intervalov zaupanja
 
-Za ocenjevanje intervalov zaupanja pri obeh metodah uporabimo funkcijo \emph{confint.default}, ki računa intervale zaupanja na podlagi standrdnih napak. Najprej smo poskusili z uporabo navadne funkcije \emph{confint}, vendar je prihajalo do problemov pri posplošenih linearnih modelih. Slednja funkcija predpostavlja normalnost, funkcija \emph{confint.default} pa temelji na asimptotski normalnosti. Za stopnjo zaupanja vzamemo $\alpha=0.05$.
+Za ocenjevanje intervalov zaupanja pri obeh metodah uporabimo funkcijo \emph{confint.default}, ki računa intervale zaupanja na podlagi standrdnih napak. Najprej smo poskusili z uporabo navadne funkcije \emph{confint}, vendar je prihajalo do problemov pri posplošenih linearnih modelih. Slednja funkcija predpostavlja normalnost, funkcija \emph{confint.default} pa temelji na asimptotski normalnosti (confint iz RDocuments, 2020). Za stopnjo zaupanja vzamemo $\alpha=0.05$.
 
 
 ## Pričakovanja
@@ -398,8 +398,7 @@ Podobno kot pri prejšnjih primerih ugotovimo, da izbira metode (\emph{glm} ali 
 
 Ker smo že zgoraj ugotovili, da ni večjih razlik pri pokritosti in širini intervalov zaupanja med posameznimi regresijskimi koeficienti, bomo analizo variance naredili na rezultatih za koeficient $\beta_1$. Na spodnjih grafih je tako prikazana velikost učinka pri analizi varianci za pokritost in kasneje še za širino intervala zaupanja glede na vključene spremenljivke. Rezultati iz grafov beremo hierarhično, torej koliko posamezna spremenljivka dodatno pojasni variabilnosti, glede na že upoštevane spremenljivke.
 
-
-```{r  results=TRUE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za pokritost intervala zaupanja"}
+```{r  results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za pokritost intervala zaupanja"}
 par(mar = c(5.1, 3.1, 4.1, 0))
 model <- aov(pokritost_B1 ~ as.factor(model) * as.factor(n) * as.factor(korelacija) * as.factor(alpha), data = as.data.frame(simulacija))
 summary(model)
@@ -408,15 +407,14 @@ plot(eta_squared(model))
 
 Iz zgornjega grafa lahko razberemo, da nobena od spremenljivk ne pojasni velikega deleža variabilnosti v pokritosti intervala zaupanja, je pa kar nekaj takih, ki pojasnijo manjši del in ki imajo statistično značilen vpliv (to nam pove povzetek modela anove, ki ni vljučen v prikaz). 
 
-Vidimo, da na začetku model pojasni nekaj manj kot $10\%$ variabilnosti pokritosti intervala zaupanja. Za tem velikost vzorca pojasni okrog $3/%$ preostale variabilnosti in korelacija nekaj manj kot $2.5/%$. Asimetričnost ostankov za tem dodatno ne pojasni nič variabilnosti. Za tem nekoliko večji del variabilnosti (glede na ostale vplive) dodatno pojasnijo še interakcija med modelom in velikostjo vzorca, interakcija med modelom in korelacijo ter na koncu še interakcija modela, velikosti vzorca in korelacije. 
+Vidimo, da na začetku model pojasni nekaj manj kot $10\%$ variabilnosti pokritosti intervala zaupanja. Za tem velikost vzorca pojasni okrog $3/%$ preostale variabilnosti in korelacija nekaj manj kot $2.5/%$. Asimetričnost ostankov za tem dodatno ne pojasni nič variabilnosti. Za tem nekoliko večji del variabilnosti (glede na ostale vplive) dodatno pojasnijo še interakcija med modelom in velikostjo vzorca, interakcija med modelom in korelacijo ter na koncu še interakcija modela, velikosti vzorca in korelacije.
 
-Pri tem se moramo zavedati, da znotraj spremenljivke model ni samo glm ali ols, vendar so upoštevani še ne polni modeli. To poudarimo zato, ker je učinek najverjetneje posledica nepolnih modelov, kjer smo tudi v prejšnjih prikazih zaznali vpliv, medtem ko med ols in glm modelom nismo opazili razlik. 
+Pri tem se moramo zavedati, da znotraj spremenljivke model ni samo \emph{glm} ali \emph{lm}, vendar so upoštevani še ne polni modeli. To poudarimo zato, ker je učinek najverjetneje posledica nepolnih modelov, kjer smo tudi v prejšnjih prikazih zaznali vpliv, medtem ko med \emph{lm} in \emph{glm} modelom nismo opazili razlik.
 
 Vpliv variabilnosti in velikost vzorca smo prav tako zaznali že iz prejšnjih grafov, analiza variance in velikost učinka pa nam naša opažanja še dodatno potrdijo. 
-
 Poglejmo si še velikost učinka pri analizi variance za širino intervalov zaupanja.
 
-```{r results=TRUE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
+```{r results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
 par(mar = c(5.1, 3.1, 4.1, 0))
 model <- aov(sirina_B1 ~ as.factor(n) * as.factor(korelacija) * as.factor(model) *  as.factor(alpha), data = as.data.frame(simulacija))
 summary(model)
@@ -424,7 +422,6 @@ plot(eta_squared(model))
 ```
 
 Opazimo, da v tem primeru ni tako veliko spremenljivk, ki bi pojasnjevale variabilnost intervalov zaupanja. Okrog $60\%$ variabilnost opazovanje spremenljivke pojasni velikost vzorca, od preostale variabilnosti nekaj več kot $20\%$ pojasni korelacija med neodvisnimi spremenljivkami. Model in asimetričnost ostankov dodatno ne pojasnjujeta večjega dela variabilnosti širine intervala zaupanja, okrog $20\%$ pa dodatno pojasnjuje še interakcija med velikostjo vzorca in korelacijo. 
-
 Ponovno nam prikaz in analiza variance potrjujeta naša prejšnja opazovanja. 
 
 
@@ -451,13 +448,14 @@ Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliv
 
 - \emph{lm}, v: RDocumentation, [ogled 30.12.2020], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm}.
 
+- \emph{confint}, v: RDocumentation, [ogled 02.01.2020], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/confint}
+
 - M. Raič, \emph{O linearni regresijji}, 2014. Najdeno na spletnem naslovu:
 \url{http://valjhun.fmf.uni-lj.si/~raicm/Odlomki/Linearna_regresija.pdf}
 
 - L. Pfajfar, \emph{Osnovna ekonometrija}, učbeniki Ekonomske fakultete, Ljubljana, 2018.
 
 - P. E. Johnson, \emph{GLM with a Gamma-distributed Dependent Variable}, [ogled 05.01.2020], dostopno na \url{https://pj.freefaculty.org/guides/stat/Regression-GLM/Gamma/GammaGLM-01.pdf?fbclid=IwAR14W34VhGzyG0wPiqNTk1hWjIToAug6a2TsPsTeZKLj_ntfTxaR1Aowiko}
-
 
 # Priloge
 
