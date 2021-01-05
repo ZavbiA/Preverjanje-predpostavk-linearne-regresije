@@ -246,7 +246,7 @@ Funkcija \emph{lm()} se uporablja za generiranje linearnih modelov. Avtomatično
 
 V linearnem modelu $Y_i = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip} + \epsilon_{i}$ velja
 $E(Y_i) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$. Slednjo enačbo lahko z uporabo primerno definirane funkcije $g$ posplošimo do $$g(E(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}.$$ Tu z indeksom $i$ označujemo i-tega posameznika. Prejšnja enačba je poseben primer, kjer je $g$ identiteta.
-Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahko generiramo več posplošenih linearnih modelov. Prednost te funkcije je tudi v tem, da lahko poleg normalne porazdelitve nastavimo še katero drugo porazdelitev ostankov. To naredimo tako, da npr. v primeru gamma porazdelitve ostankov znotraj funkcije \emph{glm()} definiramo \emph{family=Gamma(link="identity")}. Tu \emph{identity} pomeni, da za funkcijo \emph{g} vzamemo kar identiteto. Funkcija parametre modela ocenjuje po metodi iterativnega uteženega povprečja najmanjših kvadratov
+Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahko generiramo več posplošenih linearnih modelov. Prednost te funkcije je tudi v tem, da lahko poleg normalne porazdelitve nastavimo še katero drugo porazdelitev ostankov. To naredimo tako, da npr. v primeru gama porazdelitve ostankov znotraj funkcije \emph{glm()} definiramo \emph{family=Gamma(link="identity")}. Tu \emph{identity} pomeni, da za funkcijo \emph{g} vzamemo kar identiteto. Funkcija parametre modela ocenjuje po metodi iterativnega uteženega povprečja najmanjših kvadratov
 (glm iz RDocumentation, 2020).
 
 ## Pričakovanja
@@ -288,7 +288,7 @@ data_pokritost_polni <- melt(simulacija[simulacija$model == 'glm'| simulacija$mo
 ```
 
 
-```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in asimetrični porazdelitev X"}
+```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in asimetrični porazdelitvi X"}
 data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
 ggplot(data_pokritost_polni_X25, aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
@@ -316,7 +316,6 @@ pokritost2 <- c("pokritost_B1")
 data_pokritost_2 <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha_X", "n"), measure.vars = pokritost2)
 ```
 
-
 ```{r fig.cap="Pokritost intervalov zaupanja za B1 GLM"}
 #data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
 ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model == 'glm_x2'| data_pokritost_2$model == 'glm_x3',], aes(x = alpha, y = value, col = model)) +
@@ -325,6 +324,9 @@ ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model 
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
 ```
+
+
+
 ```{r fig.cap="Pokritost intervalov zaupanja za B1 OLS"}
 #data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
 ggplot(data_pokritost_2[data_pokritost_2$model == 'ols'| data_pokritost_2$model == 'ols_x2'| data_pokritost_2$model == 'ols_x3',], aes(x = alpha, y = value, col = model)) +
@@ -430,7 +432,6 @@ plot(eta_squared(model))
 
 - L. Pfajfar, \emph{Osnovna ekonometrija}, učbeniki Ekonomske fakultete, Ljubljana, 2018.
 
-- \url{https://sphweb.bumc.bu.edu/otlt/MPH-Modules/BS/R/R5_Correlation-Regression/R5_Correlation-Regression4.html}
 
 # Priloge
 

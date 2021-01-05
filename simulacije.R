@@ -1,4 +1,3 @@
-library("MASS")
 library("sjstats")
 library("doRNG")
 library("parallel")
@@ -7,6 +6,8 @@ library("reshape2")
 library("ggplot2")
 library("see")
 library("effectsize")
+library("stats")
+library("MASS")
 
 # install.packages("lcmix", repos="http://R-Forge.R-project.org") # Dependancies: nnls,  matrixStats, R.methodsS3
 # install.packages("nnls","matrixStats","R.methodsS3")
@@ -72,7 +73,7 @@ zasnova <- do.call(rbind, replicate(m, zasnova, simplify=FALSE))
 colnames(zasnova) <- c("korelacija", "alpha", "n", "alpha_X")
 b <- c(1, 1, 0)
 
-# poglej stevilo jedr in odstej enega (za nase delo)
+# poglej stevilo jeder in odstej enega (za nase delo)
 no_cores <- detectCores() - 1
 
 # doloci "skupine" za delo
@@ -97,23 +98,23 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   
   # izvedemo linearno regresijo z LM in izračunamo intervale zaupanja, enako z GLM 
   model_ols <- lm(Y ~ X)
-  ci_ols <- confint(model_ols)
-  model_glm <- glm(Y ~ X, family = Gamma(link=identity))
-  ci_glm <-  confint(model_glm)
+  ci_ols <- confint.default(model_ols)
+  model_glm <- glm(Y ~ X, family = Gamma(link="identity"))
+  ci_glm <-  confint.default(model_glm)
   
   # ostranimo x2
   X2 = X[,c(1,3)]
   model_ols_2 <- lm(Y ~ X2)
-  ci_ols_2 <- confint(model_ols_2)
-  model_glm_2 <- glm(Y ~ X2, family = Gamma(link=identity))
-  ci_glm_2 <-  confint(model_glm_2)  
+  ci_ols_2 <- confint.default(model_ols_2)
+  model_glm_2 <- glm(Y ~ X2, family = Gamma(link="identity"))
+  ci_glm_2 <-  confint.default(model_glm_2)  
   
   # ostranimo x3
   X3 = X[,c(1,2)]
   model_ols_3 <- lm(Y ~ X3)
-  ci_ols_3 <- confint(model_ols_3)
-  model_glm_3 <- glm(Y ~ X3, family = Gamma(link=identity))
-  ci_glm_3 <-  confint(model_glm_3)  
+  ci_ols_3 <- confint.default(model_ols_3)
+  model_glm_3 <- glm(Y ~ X3, family = Gamma(link="identity"))
+  ci_glm_3 <-  confint.default(model_glm_3)  
   
   # izracunamo pokritost intervalov zaupanja in sirine intervalov zaupanja
   # res = data.frame()
@@ -160,10 +161,10 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                    "sirina_B1" =  ci_ols[2,2]-ci_ols[2,1], 
                    "sirina_B2" =  ci_ols[3,2]-ci_ols[3,1],
                    "sirina_B3" =  ci_ols[4,2]-ci_ols[4,1],
-                   "B0" = as.numeric(model_ols[[1]][1] - 1),
-                   "B1" = as.numeric(model_ols[[1]][2] - b[1]),
-                   "B2" = as.numeric(model_ols[[1]][3] - b[2]),
-                   "B3" = as.numeric(model_ols[[1]][4] - b[3]))
+                   "B0" = as.numeric(model_ols[[1]][1]),
+                   "B1" = as.numeric(model_ols[[1]][2]),
+                   "B2" = as.numeric(model_ols[[1]][3]),
+                   "B3" = as.numeric(model_ols[[1]][4]))
   
   results_glm <- c("n" = n, 
                    "korelacija" = r, 
@@ -177,10 +178,10 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                    "sirina_B1" =  ci_glm[2,2]-ci_glm[2,1], 
                    "sirina_B2" =  ci_glm[3,2]-ci_glm[3,1],
                    "sirina_B3" =  ci_glm[4,2]-ci_glm[4,1],
-                   "B0" = as.numeric(model_glm[[1]][1] - 1),
-                   "B1" = as.numeric(model_glm[[1]][2] - b[1]),
-                   "B2" = as.numeric(model_glm[[1]][3] - b[2]),
-                   "B3" = as.numeric(model_glm[[1]][4] - b[3]))
+                   "B0" = as.numeric(model_glm[[1]][1]),
+                   "B1" = as.numeric(model_glm[[1]][2]),
+                   "B2" = as.numeric(model_glm[[1]][3]),
+                   "B3" = as.numeric(model_glm[[1]][4]))
   
   results_ols_x2 <- c("n" = n, 
                       "korelacija" = r, 
@@ -194,10 +195,10 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                       "sirina_B1" =  ci_ols_2[2,2]-ci_ols_2[2,1], 
                       "sirina_B2" = NA,
                       "sirina_B3" =  ci_ols_2[3,2]-ci_ols_2[3,1],
-                      "B0" = as.numeric(model_ols_2[[1]][1] - 1),
-                      "B1" = as.numeric(model_ols_2[[1]][2] - b[1]),
+                      "B0" = as.numeric(model_ols_2[[1]][1]),
+                      "B1" = as.numeric(model_ols_2[[1]][2]),
                       "B2" = NA,
-                      "B3" = as.numeric(model_ols_2[[1]][3] - b[3]))
+                      "B3" = as.numeric(model_ols_2[[1]][3]))
 
   results_glm_x2 <- c("n" = n, 
                       "korelacija" = r, 
@@ -211,10 +212,10 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                       "sirina_B1" =  ci_glm_2[2,2]-ci_glm_2[2,1],
                       "sirina_B2" = NA,
                       "sirina_B3" =  ci_glm_2[3,2]-ci_glm_2[3,1],
-                      "B0" = as.numeric(model_glm_2[[1]][1] - 1),
-                      "B1" = as.numeric(model_glm_2[[1]][2] - b[1]),
+                      "B0" = as.numeric(model_glm_2[[1]][1]),
+                      "B1" = as.numeric(model_glm_2[[1]][2]),
                       "B2" = NA,
-                      "B3" = as.numeric(model_glm_2[[1]][3] - b[3]))
+                      "B3" = as.numeric(model_glm_2[[1]][3]))
   
   results_ols_x3 <- c("n" = n, 
                       "korelacija" = r, 
@@ -228,9 +229,9 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                       "sirina_B1" =  ci_ols_3[2,2]-ci_ols_3[2,1], 
                       "sirina_B2" =  ci_ols_3[3,2]-ci_ols_3[3,1],
                       "sirina_B3" = NA,
-                      "B0" = as.numeric(model_ols_3[[1]][1] - 1),
-                      "B1" = as.numeric(model_ols_3[[1]][2] - b[1]),
-                      "B2" = as.numeric(model_ols_3[[1]][3] - b[2]),
+                      "B0" = as.numeric(model_ols_3[[1]][1]),
+                      "B1" = as.numeric(model_ols_3[[1]][2]),
+                      "B2" = as.numeric(model_ols_3[[1]][3]),
                       "B3" = NA)
   
   results_glm_x3 <- c("n" = n, 
@@ -245,9 +246,9 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                       "sirina_B1" =  ci_glm_3[2,2]-ci_glm_3[2,1], 
                       "sirina_B2" =  ci_glm_3[3,2]-ci_glm_3[3,1],
                       "sirina_B3" = NA,
-                      "B0" = as.numeric(model_glm_3[[1]][1] - 1),
-                      "B1" = as.numeric(model_glm_3[[1]][2] - b[1]),
-                      "B2" = as.numeric(model_glm_3[[1]][3] - b[2]),
+                      "B0" = as.numeric(model_glm_3[[1]][1]),
+                      "B1" = as.numeric(model_glm_3[[1]][2]),
+                      "B2" = as.numeric(model_glm_3[[1]][3]),
                       "B3" = NA) 
   
    
