@@ -296,6 +296,11 @@ ggplot(data_pokritost_polni_X25, aes(x = alpha, y = value, col = variable)) +
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
 ```
+ful slabi rezultati za B0? ...
+
+
+
+
 ```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in simetrični porazdelitev X"}
 data_pokritost_polni_X55 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 5,]
 ggplot(data_pokritost_polni_X55, aes(x = alpha, y = value, col = variable)) +
@@ -312,47 +317,74 @@ data_pokritost_2 <- melt(simulacija, id.vars = c("model","korelacija", "alpha","
 ```
 
 
-```{r fig.cap="Pokritost intervalov zaupanja za B1 pri polnem modelu GLM"}
+```{r fig.cap="Pokritost intervalov zaupanja za B1 GLM"}
 #data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
-ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model == 'ols',], aes(x = alpha, y = value, col = model)) +
+ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model == 'glm_x2'| data_pokritost_2$model == 'glm_x3',], aes(x = alpha, y = value, col = model)) +
   facet_grid(n~korelacija+alpha_X) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
 ```
-```{r fig.cap="Pokritost intervalov zaupanja za B1 pri polnem modelu"}
+```{r fig.cap="Pokritost intervalov zaupanja za B1 OLS"}
 #data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
-ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model == 'ols',], aes(x = alpha, y = value, col = model)) +
+ggplot(data_pokritost_2[data_pokritost_2$model == 'ols'| data_pokritost_2$model == 'ols_x2'| data_pokritost_2$model == 'ols_x3',], aes(x = alpha, y = value, col = model)) +
   facet_grid(n~korelacija+alpha_X) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
 ```
 
+## Širina intervalov zaupanja
 
-
-
-
-
-```{r fig.cap="Širina intervalov zaupanja"}
+```{r}
 sirina <- c("sirina_B0", "sirina_B1", "sirina_B2", "sirina_B3")
-MeltedData <- melt(simulacija[simulacija$model == 'glm'| simulacija$model == 'ols',], id.vars = c("model","korelacija", "alpha", "n"), measure.vars = sirina)
-ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+data_sirina <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha_X", "n"), measure.vars = sirina)
+```
+
+
+```{r fig.cap="Širina intervalov zaupanja pri polnih modelih in asimetricni X"}
+ggplot(data_sirina[data_sirina$model == 'glm'| data_sirina$model == 'ols' | data_sirina$model == 2,], aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije (alpha)", y = "sirina IZ")
 ```
 
-```{r fig.cap="Pristranskost ocen"}
-pristranskost <- c("B0", "B1", "B2", "B3")
-MeltedData <- melt(simulacija[simulacija$model == 'glm'| simulacija$model == 'ols',], id.vars = c("model", "korelacija", "alpha", "n"), measure.vars = pristranskost)
-ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+```{r fig.cap="Širina intervalov zaupanja pri polnih modelih in simetrični X"}
+ggplot(data_sirina[data_sirina$model == 'glm'| data_sirina$model == 'ols' | data_sirina$model == 5,], aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "pristranskost")
+  labs(x = "stopnja asimetrije (alpha)", y = "sirina IZ")
 ```
+
+```{r}
+sirina2 <- c("sirina_B1")
+data_sirina_2 <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha_X", "n"), measure.vars = sirina2)
+```
+
+```{r fig.cap="Sirina intervalov zaupanja za B1 GLM"}
+ggplot(data_sirina_2[data_sirina_2$model == 'glm'| data_sirina_2$model == 'glm_x2'| data_sirina_2$model == 'glm_x3',], aes(x = alpha, y = value, col = model)) +
+  facet_grid(n~korelacija+alpha_X) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+```
+```{r fig.cap="Sirina intervalov zaupanja za B1 GLM"}
+ggplot(data_sirina_2[data_sirina_2$model == 'ols'| data_sirina_2$model == 'ols_x2'| data_sirina_2$model == 'ols_x3',], aes(x = alpha, y = value, col = model)) +
+  facet_grid(n~korelacija+alpha_X) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+```
+
+
+
+
+
+
+
+
 
 
 ```{r results=FALSE, fig.width=8, fig.cap=""}
