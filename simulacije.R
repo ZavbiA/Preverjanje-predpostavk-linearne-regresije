@@ -12,9 +12,7 @@ library("effectsize")
 # install.packages("nnls","matrixStats","R.methodsS3")
 library("lcmix")
 
-
-
-library("lme4")
+#library("lme4") # ali to rabimo?
 
 # # GENERIRANJE ENEGA PRIMERA SETA PODATKOV
 # # Ostanki bodo porazdeljeni Gamma(shape,rate) zato potrebujemo funkcije za standardizacijo

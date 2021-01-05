@@ -9,7 +9,7 @@ output:
     includes:
       in_header: header.tex
     toc: TRUE
-    toc_depth: 3
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -109,24 +109,10 @@ Velja $\epsilon_{i} \sim N(0, \sigma^{2})$ za vsak $i$ in tako $Y_{i} \sim N(\be
 
 Lahko ga zapišemo tudi v matrični obliki: $$Y = X \beta + \epsilon.$$
 
+Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Na multikolinearnost posumimo, če se v modelu determinacijski koeficient izkaže za statistično značilnega, od regresijskih koeficientov pa nobeden.
 
-Ključne predpostavke linearnega regresijskega modela (Correlation and regression with R, 2016) so naslednje:
-
-*Ta del o predpostavkah je še malo za uredit.*
-
-1.) Normalna porazdelitev: za katerokoli vrednost $X$ je $Y$ porazdeljena normalno.
-
-2.) Homogenost variance (homoskedastičnost): varianca residualov je enaka za vse vrednosti $X$.
-
-3.) Zveza med pojasnjevalno spremenljivko $X$ in povprečjem odzivne spremenljivke $Y$ je linearna.
-
-4.) Opazovanja so med seboj neodvisna. V primeru kršenja te predpostavke je smiselno uporabiti posplošene linearne modele, običajno longitudinalni (vzdolžni) model.
-
-5.) Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Na multikolinearnost posumimo, če se v modelu determinacijski koeficient izkaže za statistično značilnega, od regresijskih koeficientov pa nobeden.
-
-6.) Medsebojna neodvisnost vrednosti slučajne spremenljivke $\epsilon$ prav tako spada med temeljne predpostavke linearnega regresijskega modela. Pravimo, da spremenljivke niso avtokorelirane oz. da v modelu ni avtokorelacije. To predpostavko zapišemo $Cov(\epsilon_{i},\epsilon_{j}) = 0$ za vsak $i\ne j$ (Pfajfar, 2018).
-
-
+Opazovanja so med seboj neodvisna. V primeru kršenja te predpostavke je smiselno uporabiti posplošene linearne modele, običajno longitudinalni (vzdolžni) model.
+Vse predpostavke linearnega regresijskega modela so navedene v naslednjem razdelku.
 
 ## Metoda najmanjših kvadratov (MNK)
 Pri 16 letih jo je odkril nemški matematik Carl F. Gauss. Zaradi svojih lastnosti je najbolj razširjena metoda ocenjevanja regresijskih koeficientov
@@ -143,7 +129,7 @@ Pfajfar (2018) navaja naslednje predpostavke metode najmanjših kvadratov:
 
 - homoskedastičnost: $Var(u_i)=E(u_i^2)=\sigma^2$
 
-- odsotnost avtokorelacije: $cov(e_i, e_j|x_i, x_j)=0; i\ne j$
+- odsotnost avtokorelacije: $cov(e_i, e_j|x_i, x_j)=0$ za vsak $i\ne j$
 
 - nekoreliranost med pojasnjevalnimi spremenljivkami in slučajno spremenljivko $u$: $Cov(x_2,u)=Cov(x_3,u)=...=Cov(x_k,u)=0$
 
@@ -162,9 +148,9 @@ Posledično je odvisna spremenljivka $y$ tudi normalno porazdeljena s.s.: $y_i \
 
 Naj bo $Y$ vektor meritev in $X$ matrika znanih konstant. Naj bo $E(Y) = X\beta$, kjer $\beta$ kot do sedaj predstavlja vektor neznanih regresijskih koeficientov. Cenilko za $\beta$ se po uteženi metodi najmanjših kvadratov dobi z minimizacijo izraza 
 \begin{equation}
-(Y - X\beta)'W(Y - X\beta)
+(Y - X\beta)'W(Y - X\beta),
 \end{equation}
-, kjer je $W$ znana simetrična matrika uteži.
+kjer je $W$ znana simetrična matrika uteži.
 
 Brez škode za splošnost naj bo rang matrike $X$ poln in naj velja rang$X=p$.
 Potem je za vsako nesingularno (simetrično) matriko $W$ minimum izraza (1) enak 
@@ -200,20 +186,30 @@ Metodi, kjer ni treba poznati ne $\beta$, ne $V$, pa se reče iterativno utežen
 Na tak način se dobi cenilka za $\beta$ po prvi iteraciji, nato pa se postopek ponavlja.
 Pod predpostavko normalnosti se izkaže, da če IWLS konvergira, bo cenilka v limiti enaka cenilki, dobljeni po metodi največjega verjetja (celotno podpoglavje je povzeto po Maver, 2018, strani 19-21).
 
-
 ## Ocenjevanje intervalov zaupanja
 
-*Načini, kako bova ocenjevali IZ. Lahko še prilagodiva, zaenkrat pa predlagam:*
+Intervale zaupanja bomo ocenili na tri različne načine - naivni, obrnjeni in na podlagi stanardnih napak. Funkciji \emph{lm} in \emph{glm} avtomatično vračata intervale zaupanja na podlagi standardnih napak.
+Naslednji opisi različnih intervalov zaupanja so povzeti po predavanjih pri predmetu Računsko zahtevne metode.
 
-- naivni
+### Naivni
 
-- na podlagi standardnih napak
+Predpostavljamo, da je porazdelitev razlike med oceno parametra in parametrom simetrična okoli 0. Njihova prednost je, da vedno dajejo vrednosti, ki so možne vrednosti parametra (npr. pri deležu bodo vedno med 0 in 1).
+Izračunamo jih po formuli: $P(\Theta\in(L,U))=1-\alpha$.
 
-- obrnjeni
+### Na podlagi standardnih napak
 
-*Na prosojnicah so zapisane glavne značilnosti posameznih IZ. Najbrž je dovolj, če zapiševa zelo na kratko*
+Najprej izračunamo standardno napako vzorčne ocene ($se(g)$) kot standardni odklon vzorčnih ocen iz bootstrap vzorcev.
+Potem izračunamo intervale zaupanja po običajih formulah (npr. za normalno porazdelitev $P(g-z_{\alpha/2}se(g)<\theta<g+z_{\alpha/2}se(g))=1-\alpha$.
+Tako izračunanemu intervalu lahko še odštejemo ocenjeno pristranskost.
 
+### Obrnjeni
 
+Tu ločimo dva primera - za lokacijske parametre in parametre merila.
+Pri lokacijskem parametru predpostavljamo, da je parameter, za katerega ocenjujemo interval zaupanja, paramater “lokacije”. Če vsem vrednostim spremenljivke prištejemo $a$, je nova vrednost parametra $\theta + a$.
+Slabost tega načina je v tem, da če predpostavka ni izpolnjena, lahko dobimo ne samo nepravilne, ampak tudi nesmiselne intervale (npr. za delež take, ki niso med 0 in 1). Izračunamo ga po sledeči formuli: $P(\theta\in(2\hat\theta-U, 2\hat\theta-L))=1-\alpha$.
+
+Pri parametru merila pa predpostavljamo, da je parameter, za katerega ocenjujemo interval zaupanja, paramater “merila”. Če vse vrednostim spremenljivke pomnožimo z $a$, je nova vrednost parametra $g(a)\theta$, kjer je funkcija $g$ odvisna le od tipa parametra (varianca,...). Slabost je v tem, da če predpostavka ni izpolnjena, lahko
+dobimo nepravilne intervale. Izračunamo pa jih po formuli $P(\theta\in(\hat\theta^2/U, \hat\theta^2/L))=1-\alpha$.
 
 # Generiranje podatkov
 
@@ -246,13 +242,12 @@ Pri pregledu literature sva ugotovili, da za generiranje odvisnih gama spremenlj
 ## Funkciji lm() in glm()
 
 Funkcija \emph{lm()} se uporablja za generiranje linearnih modelov. Avtomatično uporablja osnovno metodo najmanjših kvadratov, lahko pa nastavimo tudi na metodo uteženih najmanjših kvadratov
-(lm iz RDocumentation, 2020). V tej seminarski nalogi se v funkciji \emph{lm()} uporablja osnovno metodo najmanjših kvadratov.
+(lm iz RDocumentation, 2020). V tej seminarski nalogi uporabljamo samo osnovno metodo najmanjših kvadratov.
 
 V linearnem modelu $Y_i = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip} + \epsilon_{i}$ velja
 $E(Y_i) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$. Slednjo enačbo lahko z uporabo primerno definirane funkcije $g$ posplošimo do $$g(E(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}.$$ Tu z indeksom $i$ označujemo i-tega posameznika. Prejšnja enačba je poseben primer, kjer je $g$ identiteta.
 Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahko generiramo več posplošenih linearnih modelov. Prednost te funkcije je tudi v tem, da lahko poleg normalne porazdelitve nastavimo še katero drugo porazdelitev ostankov. To naredimo tako, da npr. v primeru gamma porazdelitve ostankov znotraj funkcije \emph{glm()} definiramo \emph{family=Gamma(link="identity")}. Tu \emph{identity} pomeni, da za funkcijo \emph{g} vzamemo kar identiteto. Funkcija parametre modela ocenjuje po metodi iterativnega uteženega povprečja najmanjših kvadratov
 (glm iz RDocumentation, 2020).
-
 
 ## Pričakovanja
 
@@ -268,7 +263,77 @@ Porazdelitev pojasnjevalnih spremenljivk preverimo za dve porazdelitvi - gama(2,
 
 # Predstavitev rezultatov
 
-*Predstavitev rezultatov (samo grafično ni dovolj, potrebno je še analizirati varianco na rezultatih).*
+```{r}
+# potrebni paketi
+library("MASS")
+library("sjstats")
+library("doRNG")
+library("parallel")
+library("doParallel")
+library("reshape2")
+library("ggplot2")
+library("see")
+library("effectsize")
+library("lcmix")
+
+source("rezultati_simulacije.R")
+simulacija = as.data.frame(simulacija)
+```
+
+```{r fig.cap="Pokritost intervalov zaupanja"}
+pokritost <- c("pokritost_B0", "pokritost_B1", "pokritost_B2", "pokritost_B3")
+MeltedData <- melt(simulacija[simulacija$model == 'glm'| simulacija$model == 'ols',], id.vars = c("model","korelacija", "alpha", "n"), measure.vars = pokritost)
+ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+  facet_grid(n~korelacija+model) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+```
+
+
+```{r fig.cap="Širina intervalov zaupanja"}
+sirina <- c("sirina_B0", "sirina_B1", "sirina_B2", "sirina_B3")
+MeltedData <- melt(simulacija[simulacija$model == 'glm'| simulacija$model == 'ols',], id.vars = c("model","korelacija", "alpha", "n"), measure.vars = sirina)
+ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+  facet_grid(n~korelacija+model) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "sirina IZ")
+```
+
+```{r fig.cap="Pristranskost ocen"}
+pristranskost <- c("B0", "B1", "B2", "B3")
+MeltedData <- melt(simulacija[simulacija$model == 'glm'| simulacija$model == 'ols',], id.vars = c("model", "korelacija", "alpha", "n"), measure.vars = pristranskost)
+ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+  facet_grid(n~korelacija+model) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "pristranskost")
+```
+
+
+```{r results=FALSE, fig.width=8, fig.cap=""}
+par(mar = c(5.1, 3.1, 4.1, 0))
+model <- aov(pokritost_B1 ~ as.factor(korelacija) * as.factor(alpha) * as.factor(n) * as.factor(model), data = as.data.frame(simulacija))
+summary(model)
+plot(eta_squared(model))
+```
+
+
+```{r results=FALSE, fig.width=8, fig.cap=""}
+par(mar = c(5.1, 3.1, 4.1, 0))
+model <- aov(sirina_B1 ~ as.factor(korelacija) * as.factor(alpha) * as.factor(n) * as.factor(model), data = as.data.frame(simulacija))
+summary(model)
+plot(eta_squared(model))
+```
+
+
+```{r results=FALSE, fig.width=8, fig.cap=""}
+par(mar = c(5.1, 3.1, 4.1, 0))
+model <- aov(B1 ~ as.factor(korelacija) * as.factor(alpha) * as.factor(n) * as.factor(model), data = as.data.frame(simulacija))
+summary(model)
+plot(eta_squared(model))
+```
 
 
 # Ugotovitve
@@ -280,8 +345,6 @@ Porazdelitev pojasnjevalnih spremenljivk preverimo za dve porazdelitvi - gama(2,
 - V. Maver, \emph{Normalni linearni mešani modeli}, diplomsko delo, Fakulteta za matematiko in fiziko, Univerza v Ljubljani, 2018.
 
 - J. Jiang, \emph{Linear and Generalized Linear Mixed Models and Their Applications}, Springer Series in Statistics, Springer Science + Business Media, LLC, New York, 2007.
-
-- D. Bates et al., \emph{Package 'lme4'}, v: Linear Mixed-Effects Models using 'Eigen' and S4, [ogled 30.12.2020], dostopno na \url{https://cran.r-project.org/web/packages/lme4/lme4.pdf}.
 
 - \emph{glm}, v: RDocumentation, [ogled 30.12.2020], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.0/topics/glm}.
 
