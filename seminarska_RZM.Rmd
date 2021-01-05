@@ -44,12 +44,12 @@ library(corrplot)
 
 Obravnavana metoda je linearna regresija in zanima nas, kako kršenje predpostavk (konkretneje nenormalna porazdelitev ostankov in močna korelacija med pojasnjevalnimi spremenljivkami) vpliva na njene rezultate.
 Preverjali bomo vpliv različnih dejavnikov na pristranost in širino intervalov zaupanja regresijskih koeficientov.
-Za izračun intervalov zaupanja bomo uporabili različne metode, ki smo jih spoznali v poglavjih simulacij in metod samovzorčenja. Tako bomo primerjali pokritosti in širine različno ocenjenih intervalov zaupanja.
+Ti dejavniki so velikost vzorca, moč korelacije med pojasnjevalnimi spremenljivkami, asimetrija porazdelitve ostankov, asimetrija porazdelitve pojasnjevalnih spremenljivk ter število vključenih spremenljivk v modelu.
 Poleg tega bomo preverjali, če probleme kršenja predpostavk lahko (vsaj delno) odpravimo z uporabo posplošenih linearnih modelov.
 
 # Teoretični del
 
-Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. V tem poglavju so najprej bolj splošno predstavljeni posplošeni linearni modeli, nato pa podrobneje model linearne regresije in metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente. V zadnjem delu tega poglavja so predstavljeni načini za izračun intervalov zaupanja regresijskih koeficientov.
+Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. V tem poglavju so najprej bolj splošno predstavljeni posplošeni linearni modeli, nato pa podrobneje model linearne regresije in metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente.
 
 ## Posplošeni linearni modeli
 
@@ -229,7 +229,7 @@ Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahk
 
 ## Ocenjevanje intervalov zaupanja
 
-Za ocenjevanje intervalov zaupanja pri obeh metodah uporabimo funkcijo \emph{confint.default}, ki računa intervale zaupanja na podlagi standrdnih napak. Najprej smo poskusili z uporabo navadne funkcije \emph{confint}, vendar je prihajalo do problemov pri posplošenih linearnih modelih. Slednja funkcija predpostavlja normalnost, funkcija \emph{confint.default} pa temelji na asimptotski normalnosti (confint iz RDocuments, 2020). Za stopnjo zaupanja vzamemo $\alpha=0.05$.
+Za ocenjevanje intervalov zaupanja pri obeh metodah uporabimo funkcijo \emph{confint.default}, ki računa intervale zaupanja na podlagi standrdnih napak. Najprej smo poskusili z uporabo navadne funkcije \emph{confint}, vendar je prihajalo do problemov pri posplošenih linearnih modelih. Slednja funkcija predpostavlja normalnost, funkcija \emph{confint.default} pa temelji na asimptotski normalnosti (confint iz RDocumentation, 2020). Za stopnjo zaupanja vzamemo $\alpha=0.05$.
 
 
 ## Pričakovanja
@@ -312,7 +312,7 @@ ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model 
   labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
 ```
 
-Na zgornjem grafu opazujemo pokritost intervalov zaupanja regresijskega koeficienta $\beta_1$ pri polnem modelu (\emph{glm}), pri modelu, v katerega ne vključimo spremenljivke $X_2$ (\emph{glm_x2}) ter pri modelu, v katerega ne vključimo spremenljivke $X_3$ (\emph{glm_x3}).
+Na zgornjem grafu opazujemo pokritost intervalov zaupanja regresijskega koeficienta $\beta_1$ pri polnem modelu (\emph{glm}), pri modelu, v katerega ne vključimo spremenljivke $X_2$ (*glm_x2*) ter pri modelu, v katerega ne vključimo spremenljivke $X_3$ (*glm_x3*).
 Če med pojasnjevalnimi spremenljivkami ni korelacije, je ne glede na ostale dejavnike pokritost IZ vedno blizu 100%.
 Opazimo, da je pri večji korelaciji med pojasnjevalnimi spremenljivkami in pri večjem vzorcu v modelu brez spremenljivke $X_2$ manjša pokritost IZ regresijskega koeficienta $\beta_1$. Pri polnem modelu in modelu brez spremenljivke $X_3$ noben dejavnik ne vpliva na pokritost IZ, saj je povsod zelo blizu 100%.
 Zanimivo je, da je v modelu brez $X_2$ pokritost pri simetrični porazdelitvi pojasnjevalnih spremenljivk ($gamma(5,5)$) slabša kot pri bolj asimetrični ($gamma(2,5)$.
@@ -377,7 +377,7 @@ ggplot(data_sirina_2[data_sirina_2$model == 'glm'| data_sirina_2$model == 'glm_x
   labs(x = "stopnja asimetrije (alpha)", y = "širina IZ")
 ```
 
-Na Sliki 5 so prikazane širine IZ regresijskega koeficienta $\beta_1$ z uporabo funkcije \emph{glm} pri polnem modelu, pri modelu brez $X_2$ (\emph{glm_x2}) in pri modelu brez $X_3$ (\emph{glm_x3}).
+Na Sliki 5 so prikazane širine IZ regresijskega koeficienta $\beta_1$ z uporabo funkcije \emph{glm} pri polnem modelu, pri modelu brez $X_2$ (*glm_x2*) in pri modelu brez $X_3$ (*glm_x3*).
 Opazimo, da je pri bolj asimetrični porazdelitvi pojasnjevalnih spremenljivk ($gama(2,5)$) IZ širši kot pri bolj simetrični porazdelitvi pojasnjevalnih spremenljivk ($gama(5,5)$). Razlika je bolj opazna pri manjših vzorcih, pri večjih pa se razlike ne opazi več.
 Stopnja asimetrije porazdelitve ostankov ne vpliva na širino IZ regresijskega koeficienta $\beta_1$.
 Daleč najširše intervale zaupanja dobimo pri manjših vzorcih in veliki korelaciji med pojasnjevalnimi spremenljivkami.
@@ -399,7 +399,7 @@ Podobno kot pri prejšnjih primerih ugotovimo, da izbira metode (\emph{glm} ali 
 Ker smo že zgoraj ugotovili, da ni večjih razlik pri pokritosti in širini intervalov zaupanja med posameznimi regresijskimi koeficienti, bomo analizo variance naredili na rezultatih za koeficient $\beta_1$. Na spodnjih grafih je tako prikazana velikost učinka pri analizi varianci za pokritost in kasneje še za širino intervala zaupanja glede na vključene spremenljivke. Rezultati iz grafov beremo hierarhično, torej koliko posamezna spremenljivka dodatno pojasni variabilnosti, glede na že upoštevane spremenljivke.
 
 ```{r  results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za pokritost intervala zaupanja"}
-par(mar = c(5.1, 3.1, 4.1, 0))
+par(mar = c(5.1, 3.1, 4.1, 1))
 model <- aov(pokritost_B1 ~ as.factor(model) * as.factor(n) * as.factor(korelacija) * as.factor(alpha), data = as.data.frame(simulacija))
 summary(model)
 plot(eta_squared(model))
@@ -415,7 +415,7 @@ Vpliv variabilnosti in velikost vzorca smo prav tako zaznali že iz prejšnjih g
 Poglejmo si še velikost učinka pri analizi variance za širino intervalov zaupanja.
 
 ```{r results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
-par(mar = c(5.1, 3.1, 4.1, 0))
+par(mar = c(5.1, 3.1, 4.1, 1))
 model <- aov(sirina_B1 ~ as.factor(n) * as.factor(korelacija) * as.factor(model) *  as.factor(alpha), data = as.data.frame(simulacija))
 summary(model)
 plot(eta_squared(model))
