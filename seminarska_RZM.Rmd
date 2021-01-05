@@ -280,15 +280,58 @@ source("rezultati_simulacije.R")
 simulacija = as.data.frame(simulacija)
 ```
 
-```{r fig.cap="Pokritost intervalov zaupanja"}
+## Pokritost intervalov zaupanja
+
+```{r}
 pokritost <- c("pokritost_B0", "pokritost_B1", "pokritost_B2", "pokritost_B3")
-MeltedData <- melt(simulacija[simulacija$model == 'glm'| simulacija$model == 'ols',], id.vars = c("model","korelacija", "alpha", "n"), measure.vars = pokritost)
-ggplot(MeltedData, aes(x = alpha, y = value, col = variable)) +
+data_pokritost_polni <- melt(simulacija[simulacija$model == 'glm'| simulacija$model == 'ols',], id.vars = c("model","korelacija", "alpha","alpha_X", "n"), measure.vars = pokritost)
+```
+
+
+```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in asimetrični porazdelitev X"}
+data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
+ggplot(data_pokritost_polni_X25, aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
 ```
+```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in simetrični porazdelitev X"}
+data_pokritost_polni_X55 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 5,]
+ggplot(data_pokritost_polni_X55, aes(x = alpha, y = value, col = variable)) +
+  facet_grid(n~korelacija+model) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+```
+**Pobližje si poglejmo primerjavo za beta1, kjer bomo pogledali tudi vpliv na beta1 če imamo polni model ali ne, mogoče bomo mogli pogledat tudi za beta 0??**: 
+
+```{r}
+pokritost2 <- c("pokritost_B1")
+data_pokritost_2 <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha_X", "n"), measure.vars = pokritost2)
+```
+
+
+```{r fig.cap="Pokritost intervalov zaupanja za B1 pri polnem modelu GLM"}
+#data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
+ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model == 'ols',], aes(x = alpha, y = value, col = model)) +
+  facet_grid(n~korelacija+alpha_X) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+```
+```{r fig.cap="Pokritost intervalov zaupanja za B1 pri polnem modelu"}
+#data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
+ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model == 'ols',], aes(x = alpha, y = value, col = model)) +
+  facet_grid(n~korelacija+alpha_X) +
+  stat_summary(fun = mean, geom="line") +
+  stat_summary(fun = mean, geom="point") +
+  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+```
+
+
+
+
 
 
 ```{r fig.cap="Širina intervalov zaupanja"}
