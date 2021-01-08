@@ -206,7 +206,7 @@ Pri generiranju podatkov bomo spreminjali sledeče:
 - porazdelitev pojasnjevalnih spremenljivk:
   $X_j \sim Gamma(\delta,5)$, $j=1,2,3$, $\delta=2,5$;
 
-- porazdelitev napak ($Gamma(\alpha, \beta)$), kjer bomo parameter $\alpha$ spreminjali tako, da dobimo različno močno asimetrične porazdelitve ($(\alpha,\beta) \in \{(1,5), (3,5), (5,5)\}$;
+- porazdelitev napak ($Gamma(\alpha, 5)$), kjer bomo parameter $\alpha$ spreminjali tako, da dobimo različno močno asimetrične porazdelitve ($\alpha \in \{1, 3, 5\}$;
 
 - v modelu ne upoštevamo vseh neodvisnih spremenljivk (spreminjamo število spremenljivk, ki jih upoštevamo): enkrat vključimo vse spremenljivke, enkrat izločimo $X_3$ (ki nima vpliva na odzivno spremenljivko), enkrat pa izločimo $X_2$.
 
@@ -219,7 +219,7 @@ Pri pregledu literature sva ugotovili, da za generiranje odvisnih gama spremenlj
 
 ## Funkciji lm() in glm()
 
-Funkcija \emph{lm()} se uporablja za generiranje linearnih modelov. Avtomatično uporablja osnovno metodo najmanjših kvadratov, lahko pa nastavimo tudi na metodo uteženih najmanjših kvadratov
+Funkcija \emph{lm()} se uporablja za ocenjevanje linearnih modelov. Avtomatično uporablja osnovno metodo najmanjših kvadratov, lahko pa nastavimo tudi na metodo uteženih najmanjših kvadratov
 (lm iz RDocumentation, 2020). V tej seminarski nalogi uporabljamo samo osnovno metodo najmanjših kvadratov.
 
 V linearnem modelu $Y_i = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip} + \epsilon_{i}$ velja
@@ -271,13 +271,13 @@ data_pokritost_polni <- melt(simulacija[simulacija$model == 'glm'| simulacija$mo
 ```
 
 
-```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in asimetrični porazdelitvi X"}
+```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 data_pokritost_polni_X25 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 2,]
 ggplot(data_pokritost_polni_X25, aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
 Na Sliki 1 vidimo, da so pokritosti intervalov zaupanja za regresijske koeficiente $\beta_1$, $\beta_2$ in $\beta_3$ vedno blizu 100%, ne glede na uporabljeno metodo, velikost vzorca, korelacijo med pojasnjevalnimi spremenljivkami in stopnjo asimetrije ostankov.
@@ -286,13 +286,13 @@ Velikost korelacije med pojasnjevalnimi spremenljvkami prav tako vpliva na pokri
 
 
 
-```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in simetrični porazdelitev X"}
+```{r fig.cap="Pokritost intervalov zaupanja pri polnem modelu in Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 data_pokritost_polni_X55 <- data_pokritost_polni[data_pokritost_polni$alpha_X == 5,]
 ggplot(data_pokritost_polni_X55, aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
 Če primerjamo sliki 1 in 2, vidimo, da pri simetrični in asimetrično porazdelitvi pojasnjevalnih spremenljivk dobimo praktično identične rezultate pokritosti intervalov zaupanja regresijskih koeficientov. Interpretacija je torej enaka kot pri Sliki 1.
@@ -309,7 +309,7 @@ ggplot(data_pokritost_2[data_pokritost_2$model == 'glm'| data_pokritost_2$model 
   facet_grid(n~korelacija+alpha_X) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
 Na zgornjem grafu opazujemo pokritost intervalov zaupanja regresijskega koeficienta $\beta_1$ pri polnem modelu (\emph{glm}), pri modelu, v katerega ne vključimo spremenljivke $X_2$ (*glm_x2*) ter pri modelu, v katerega ne vključimo spremenljivke $X_3$ (*glm_x3*).
@@ -326,7 +326,7 @@ ggplot(data_pokritost_2[data_pokritost_2$model == 'ols'| data_pokritost_2$model 
   facet_grid(n~korelacija+alpha_X) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "pokritost IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
 
@@ -342,24 +342,24 @@ data_sirina <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha
 ```
 
 
-```{r fig.cap="Širina intervalov zaupanja pri polnih modelih in asimetricni X"}
+```{r fig.cap="Širina intervalov zaupanja pri polnih modelih in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_sirina[data_sirina$model == 'glm'| data_sirina$model == 'ols' | data_sirina$model == 2,], aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "sirina IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "sirina IZ")
 ```
 
 Na zgornji sliki vidimo, da če pojasnjevalne spremenljivke med seboj niso korelirane, se širine IZ vseh regresijskih koeficientov (tudi konstante) praktično povsem ujemajo. Pričakovano je pri manjšem vzorcu večja širina kot pri večjem vzorcu.
 Pri večji korelaciji med pojasnjevalnimi spremenljivkami prihaja do večjih razlik med širinami IZ regresijske konstante in drugih regresijskih koeficientov. Največja širina IZ regresijskih koeficientov je pri najmanjšem vzorcu in največji korelaciji med pojasnjevalnimi spremenljivkami, kar je bilo pričakovano. Pri večjih vzorcih so razlike manjše, vseeno pa tudi pri največjem vzorcu ($n=1000$) opaziti nekoliko ožji IZ regresijske konstante kot IZ ostalih regresijskih koeficientov. Korelacija med pojasnjevalnimi spremenljivkami na širino IZ regresijske konstante torej manj vpliva.
 Med metodama \emph{gls} in \emph{lm} v nobenem primeru (ne glede na ostale dejavnike) ni opaznih večjih razlik. 
 
-```{r fig.cap="Širina intervalov zaupanja pri polnih modelih in simetrični X"}
+```{r fig.cap="Širina intervalov zaupanja pri polnih modelih in Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_sirina[data_sirina$model == 'glm'| data_sirina$model == 'ols' | data_sirina$model == 5,], aes(x = alpha, y = value, col = variable)) +
   facet_grid(n~korelacija+model) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "sirina IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "sirina IZ")
 ```
 
 Podobno kot pri pokritosti IZ lahko tudi pri širini IZ vidimo, da med slikama 3 in 4 ni posebnih razlik. Torej ni razlik v širini IZ regresijskih koeficientov glede na (a)simetrijo pojasnjevalnih spremenljivk.
@@ -374,7 +374,7 @@ ggplot(data_sirina_2[data_sirina_2$model == 'glm'| data_sirina_2$model == 'glm_x
   facet_grid(n~korelacija+alpha_X) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "širina IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "širina IZ")
 ```
 
 Na Sliki 5 so prikazane širine IZ regresijskega koeficienta $\beta_1$ z uporabo funkcije \emph{glm} pri polnem modelu, pri modelu brez $X_2$ (*glm_x2*) in pri modelu brez $X_3$ (*glm_x3*).
@@ -389,7 +389,7 @@ ggplot(data_sirina_2[data_sirina_2$model == 'ols'| data_sirina_2$model == 'ols_x
   facet_grid(n~korelacija+alpha_X) +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
-  labs(x = "stopnja asimetrije (alpha)", y = "širina IZ")
+  labs(x = "stopnja asimetrije ostankov (alpha)", y = "širina IZ")
 ```
 
 Podobno kot pri prejšnjih primerih ugotovimo, da izbira metode (\emph{glm} ali \emph{lm}) ne vpliva na širino IZ regresijskega koeficienta $\beta_1$. 
@@ -400,14 +400,17 @@ Ker smo že zgoraj ugotovili, da ni večjih razlik pri pokritosti in širini int
 
 ```{r  results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za pokritost intervala zaupanja"}
 par(mar = c(5.1, 3.1, 4.1, 1))
-model <- aov(pokritost_B1 ~ as.factor(model) * as.factor(n) * as.factor(korelacija) * as.factor(alpha), data = as.data.frame(simulacija))
-summary(model)
-plot(eta_squared(model))
+simulacija$n <- as.factor(simulacija$n)
+simulacija$korelacija <- as.factor(simulacija$korelacija)
+simulacija$model <- as.factor(simulacija$model)
+simulacija$alpha <- as.factor(simulacija$alpha)
+model1 <- aov(pokritost_B1 ~ model * n * korelacija * alpha, data = as.data.frame(simulacija))
+plot(eta_squared(model1))
 ```
 
 Iz zgornjega grafa lahko razberemo, da nobena od spremenljivk ne pojasni velikega deleža variabilnosti v pokritosti intervala zaupanja, je pa kar nekaj takih, ki pojasnijo manjši del in ki imajo statistično značilen vpliv (to nam pove povzetek modela anove, ki ni vljučen v prikaz). 
 
-Vidimo, da na začetku model pojasni nekaj manj kot $10\%$ variabilnosti pokritosti intervala zaupanja. Za tem velikost vzorca pojasni okrog $3/%$ preostale variabilnosti in korelacija nekaj manj kot $2.5/%$. Asimetričnost ostankov za tem dodatno ne pojasni nič variabilnosti. Za tem nekoliko večji del variabilnosti (glede na ostale vplive) dodatno pojasnijo še interakcija med modelom in velikostjo vzorca, interakcija med modelom in korelacijo ter na koncu še interakcija modela, velikosti vzorca in korelacije.
+Vidimo, da na začetku model pojasni nekaj manj kot $10\%$ variabilnosti pokritosti intervala zaupanja. Za tem velikost vzorca pojasni okrog $3\%$ preostale variabilnosti in korelacija nekaj manj kot $2.5\%$. Asimetričnost ostankov za tem dodatno ne pojasni nič variabilnosti. Za tem nekoliko večji del variabilnosti (glede na ostale vplive) dodatno pojasnijo še interakcija med modelom in velikostjo vzorca, interakcija med modelom in korelacijo ter na koncu še interakcija modela, velikosti vzorca in korelacije.
 
 Pri tem se moramo zavedati, da znotraj spremenljivke model ni samo \emph{glm} ali \emph{lm}, vendar so upoštevani še ne polni modeli. To poudarimo zato, ker je učinek najverjetneje posledica nepolnih modelov, kjer smo tudi v prejšnjih prikazih zaznali vpliv, medtem ko med \emph{lm} in \emph{glm} modelom nismo opazili razlik.
 
@@ -416,9 +419,8 @@ Poglejmo si še velikost učinka pri analizi variance za širino intervalov zaup
 
 ```{r results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
 par(mar = c(5.1, 3.1, 4.1, 1))
-model <- aov(sirina_B1 ~ as.factor(n) * as.factor(korelacija) * as.factor(model) *  as.factor(alpha), data = as.data.frame(simulacija))
-summary(model)
-plot(eta_squared(model))
+model2 <- aov(sirina_B1 ~ n * korelacija * model *  alpha, data = as.data.frame(simulacija))
+plot(eta_squared(model2))
 ```
 
 Opazimo, da v tem primeru ni tako veliko spremenljivk, ki bi pojasnjevale variabilnost intervalov zaupanja. Okrog $60\%$ variabilnost opazovanje spremenljivke pojasni velikost vzorca, od preostale variabilnosti nekaj več kot $20\%$ pojasni korelacija med neodvisnimi spremenljivkami. Model in asimetričnost ostankov dodatno ne pojasnjujeta večjega dela variabilnosti širine intervala zaupanja, okrog $20\%$ pa dodatno pojasnjuje še interakcija med velikostjo vzorca in korelacijo. 
@@ -460,4 +462,14 @@ Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliv
 # Priloge
 
 Vsa uporabljena koda se nahaja v priloženi datoteki `Simulacije.R`.
+
+Sledi izpis ANOVE za prvi in drugi model.
+
+```{r}
+summary(model1)
+```
+
+```{r}
+summary(model2)
+```
 
