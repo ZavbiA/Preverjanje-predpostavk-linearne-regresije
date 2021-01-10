@@ -259,7 +259,7 @@ library("see")
 library("effectsize")
 library("lcmix")
 
-source("rezultati_simulacije_brez_norm.R")
+load("rezultati_simulacije_brez_norm.R")
 simulacija = as.data.frame(simulacija)
 ```
 

@@ -97,23 +97,23 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   
   # izvedemo linearno regresijo z LM in izracunamo intervale zaupanja, enako z GLM 
   model_ols <- lm(Y ~ X)
-  ci_ols <- confint.default(model_ols)
+  ci_ols <- confint(model_ols)
   model_glm <- glm(Y ~ X, family = Gamma(link="identity"))
-  ci_glm <-  confint.default(model_glm)
+  ci_glm <-  confint(model_glm)
   
   # ostranimo x2
   X2 = X[,c(1,3)]
   model_ols_2 <- lm(Y ~ X2)
-  ci_ols_2 <- confint.default(model_ols_2)
+  ci_ols_2 <- confint(model_ols_2)
   model_glm_2 <- glm(Y ~ X2, family = Gamma(link="identity"))
-  ci_glm_2 <-  confint.default(model_glm_2)  
+  ci_glm_2 <-  confint(model_glm_2)  
   
   # ostranimo x3
   X3 = X[,c(1,2)]
   model_ols_3 <- lm(Y ~ X3)
-  ci_ols_3 <- confint.default(model_ols_3)
+  ci_ols_3 <- confint(model_ols_3)
   model_glm_3 <- glm(Y ~ X3, family = Gamma(link="identity"))
-  ci_glm_3 <-  confint.default(model_glm_3)  
+  ci_glm_3 <-  confint(model_glm_3)  
   
   # izracunamo pokritost intervalov zaupanja in sirine intervalov zaupanja
   # res = data.frame()
@@ -259,5 +259,5 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
 stopCluster(cl)
 head(simulacija)
 
-dump("simulacija", file="rezultati_simulacije_brez_norm.R")
+save("simulacija", file="rezultati_simulacije_brez_norm.R")
 
