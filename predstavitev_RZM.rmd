@@ -245,7 +245,7 @@ ggplot(data_sirina %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable ==
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-pokritost1 #[order(pokritost1$n, pokritost1$korelacija, pokritost1$alpha),]
+kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
 ```
 
 # Pregled rezultatov - Ostranjevanje spremenljivk
@@ -254,7 +254,7 @@ pokritost1 #[order(pokritost1$n, pokritost1$korelacija, pokritost1$alpha),]
 ```{r}
 sirina1 <- data_sirina %>% filter(model %in%  c('glm','glm_x2','glm_x3'), variable == 'sirina_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-sirina1
+kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
 ```
 
 # Pregled rezultatov - Ostranjevanje spremenljivk
@@ -288,7 +288,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x2','glm_x2'), variable == 'sirin
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
 pokritost1$razlika <- pokritost1$glm_x2 - pokritost1$ols_x2
-pokritost1 #[order(pokritost1$n, pokritost1$korelacija, pokritost1$alpha),]
+kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
 ```
 
 # Pregled rezultatov - Ostranjevanje spremenljivk
@@ -299,7 +299,7 @@ sirina1 <- data_sirina %>% filter(model %in% c('ols_x2','glm_x2'), variable == '
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
 sirina1$razlika <- sirina1$glm_x2 - sirina1$ols_x2
 sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols_x2) %>% round(2)
-sirina1
+kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
 ```
 
 # Pregled rezultatov - Ostranjevanje spremenljivk
@@ -333,7 +333,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x2','glm_x2'), variable == 'sirin
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
 pokritost1$razlika <- pokritost1$glm_x2 - pokritost1$ols_x2
-pokritost1 #[order(pokritost1$n, pokritost1$korelacija, pokritost1$alpha),]
+kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
 ```
 
 # Pregled rezultatov - Ostranjevanje spremenljivk
@@ -344,7 +344,7 @@ sirina1 <- data_sirina %>% filter(model %in% c('ols_x2','glm_x2'), variable == '
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
 sirina1$razlika <- sirina1$glm_x2 - sirina1$ols_x2
 sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols_x2) %>% round(2)
-sirina1
+kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
 ```
 
 
