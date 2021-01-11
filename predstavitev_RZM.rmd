@@ -28,13 +28,15 @@ library("MASS")
 
 - Opazujemo širino in pokritost IZ regresijskih koeficientov
 
+- Ocenjevanje intervalov zaupanja s funkcijo `confint.default()`
+
 - Linearna regresija (lm) in posplošeni linearni modeli (glm)
 
 - Metoda najmanjših kvadratov (OLS) in metoda iterativnega uteženega povprečja najmanjših kvadratov (IWLS)
 
 - Prednost funkcije `glm()`: `family, link`
 
-- Ocenjevanje intervalov zaupanja s funkcijo `confint.default()`
+$$g(E(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$$
 
 # Predpostavke LR
 
