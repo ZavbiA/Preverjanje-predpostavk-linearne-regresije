@@ -120,7 +120,7 @@ data_sirina <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha
 data_sirina$korelacija = data_sirina$korelacija %>% round(1)
 ```
 
-## Porazdelitev ostankov Gamma(2,5) - pokritost
+## X ~ Gamma(2,5) - pokritost
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\beta_1$ pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==2), aes(x = alpha, y = value, col = model)) +
@@ -132,7 +132,7 @@ ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokrito
 ```
 
 # Pregled rezultatov - Polni model
-## Porazdelitev ostankov Gamma(2,5) - širina IZ
+## X ~ Gamma(2,5) - širina IZ
 
 ```{r fig.cap="Širina intervalov zaupanja za koeficient $\beta_1$ pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 
@@ -144,33 +144,7 @@ ggplot(data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1'
 ```
 
 # Pregled rezultatov - Polni model
-## Porazdelitev ostankov Gamma(2,5) - pokritost tabela
-
-```{r}
-pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-pokritost1$razlika <- pokritost1$glm - pokritost1$ols
-
-
-kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-
-# Pregled rezultatov - Polni model
-## Porazdelitev ostankov Gamma(2,5) - širina IZ tabela
-
-
-```{r}
-sirina1 <- data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-sirina1$razlika <- sirina1$glm - sirina1$ols
-sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols) %>% round(2)
-kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-
-# Pregled rezultatov - Polni model
-## Porazdelitev ostankov Gamma(5,5) - pokritost
+## X ~ Gamma(5,5) - pokritost
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\beta_1$ pri polnem modelu in Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==5), aes(x = alpha, y = value, col = model)) +
@@ -182,7 +156,7 @@ ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokrito
 ```
 
 # Pregled rezultatov - Polni model
-## Porazdelitev ostankov Gamma(5,5) - širina IZ
+## X ~ Gamma(5,5) - širina IZ
 
 ```{r fig.cap="Širina intervalov zaupanja za koeficient $\beta_1$ pri polnem modelu in Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 
@@ -193,30 +167,8 @@ ggplot(data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1'
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "sirina IZ")
 ```
 
-# Pregled rezultatov - Polni model
-## Porazdelitev ostankov Gamma(5,5) - pokritost tabela
-
-```{r}
-pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-pokritost1$razlika <- pokritost1$glm - pokritost1$ols
-kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-# Pregled rezultatov - Polni model
-## Porazdelitev ostankov Gamma(5,5) - širina IZ tabela
-
-```{r}
-sirina1 <- data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-sirina1$razlika <- sirina1$glm - sirina1$ols
-sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols) %>% round(2)
-kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - GLM pokritost
+# Pregled rezultatov - Odstranjevanje spremenljivk
+## X ~ Gamma(2,5) - GLM pokritost
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\beta_1$ pri GLM in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_pokritost %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable == 'pokritost_B1', alpha_X==2), aes(x = alpha, y = value, col = model)) +
@@ -227,8 +179,8 @@ ggplot(data_pokritost %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - GLM širina IZ
+# Pregled rezultatov - Odstranjevanje spremenljivk
+## X ~ Gamma(2,5) - GLM širina IZ
 
 ```{r fig.cap="Širina intervalov zaupanja za koeficient $\beta_1$ pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 
@@ -239,26 +191,8 @@ ggplot(data_sirina %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable ==
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "sirina IZ")
 ```
 
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - GLM pokritost tabela
-
-```{r}
-pokritost1 <- data_pokritost %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - GLM širina IZ tabela
-
-```{r}
-sirina1 <- data_sirina %>% filter(model %in%  c('glm','glm_x2','glm_x3'), variable == 'sirina_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - primerjava GLM in OLS pri ostranjevanju X2 - pokritost
+# Pregled rezultatov - Odstranjevanje spremenljivk
+## X ~ Gamma(2,5) - primerjava GLM in OLS brez X2 - pokritost
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\beta_1$ pri modelu brez x2 in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==2), aes(x = alpha, y = value, col = model)) +
@@ -269,8 +203,8 @@ ggplot(data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'p
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - primerjava GLM in OLS pri ostranjevanju X2 - širina IZ
+# Pregled rezultatov - Odstranjevanje spremenljivk
+## X ~ Gamma(2,5) - primerjava GLM in OLS brez X2 - širina IZ
 
 ```{r fig.cap="Širina intervalov zaupanja za koeficient $\beta_1$ pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 
@@ -281,29 +215,8 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x2','glm_x2'), variable == 'sirin
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "sirina IZ")
 ```
 
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - primerjava GLM in OLS pri ostranjevanju X2 - pokritost tabela
-
-```{r}
-pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-pokritost1$razlika <- pokritost1$glm_x2 - pokritost1$ols_x2
-kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(2,5) - primerjava GLM in OLS pri ostranjevanju X2 - širina IZ tabela
-
-```{r}
-sirina1 <- data_sirina %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'sirina_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-sirina1$razlika <- sirina1$glm_x2 - sirina1$ols_x2
-sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols_x2) %>% round(2)
-kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(5,5) - primerjava GLM in OLS pri ostranjevanju X2 - pokritost
+# Pregled rezultatov - Odstranjevanje spremenljivk
+## X ~ Gamma(5,5) - primerjava GLM in OLS brez X2 - pokritost
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\beta_1$ pri modelu brez x2 in Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==5), aes(x = alpha, y = value, col = model)) +
@@ -314,8 +227,8 @@ ggplot(data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'p
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(5,5) - primerjava GLM in OLS pri ostranjevanju X2 - širina IZ
+# Pregled rezultatov - Odstranjevanje spremenljivk
+## X ~ Gamma(5,5) - primerjava GLM in OLS brez X2 - širina IZ
 
 ```{r fig.cap="Širina intervalov zaupanja za koeficient $\beta_1$ pri polnem modelu in Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 
@@ -326,32 +239,10 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x2','glm_x2'), variable == 'sirin
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "sirina IZ")
 ```
 
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(5,5) - primerjava GLM in OLS pri ostranjevanju X2 - pokritost tabela
-
-```{r}
-pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-pokritost1$razlika <- pokritost1$glm_x2 - pokritost1$ols_x2
-kable(pokritost1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-# Pregled rezultatov - Ostranjevanje spremenljivk
-## Porazdelitev ostankov Gamma(5,5) - primerjava GLM in OLS pri ostranjevanju X2 - širina IZ tabela
-
-```{r}
-sirina1 <- data_sirina %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'sirina_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
-  dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
-sirina1$razlika <- sirina1$glm_x2 - sirina1$ols_x2
-sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols_x2) %>% round(2)
-kable(sirina1, booktabs = F, align = "c") %>% kable_styling(full_width = F, latex_options = c("scale_down"))
-```
-
-
 # Analiza variance
 ## Pokritost
 
-```{r  results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za pokritost intervala zaupanja"}
+```{r  results=FALSE, fig.width=8, fig.height=4.5, fig.cap="Velikost učinka pri analizi variance za pokritost intervala zaupanja"}
 par(mar = c(5.1, 3.1, 4.1, 1))
 simulacija$n <- as.factor(simulacija$n)
 simulacija$korelacija <- as.factor(simulacija$korelacija)
@@ -365,7 +256,7 @@ plot(eta_squared(model1))
 # Analiza variance
 ## Širina IZ
 
-```{r results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
+```{r results=FALSE, fig.width=8, fig.height=4.5, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
 par(mar = c(5.1, 3.1, 4.1, 1))
 model2 <- aov(sirina_B1 ~ n * korelacija * model *  alpha, data = simulacija)
 plot(eta_squared(model2))
@@ -373,11 +264,15 @@ plot(eta_squared(model2))
 
 # Dopolnitev in izboljšave
 
-Na koncu je dobro, da napiševa, kaj bova še dodali/spremenili. Npr:
+- Preverjanje vpliva transformacije (link funkcija v `glm`): Za neko funkcijo `g` (npr. `g=log()`) je razlika med
 
-- Preverjanje vpliva homoskedastičnosti/nelinearne zveze
+$$g(E(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$$
 
-- 
+$$E(g(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$$
+
+- Skaliranje variance pojasnjevalnih spremenljivk
+
+- Različni načini ocenjevanja IZ
 
 # Zaključek
 
