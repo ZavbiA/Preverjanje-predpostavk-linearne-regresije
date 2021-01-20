@@ -108,8 +108,8 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                "sirina_B2" =  if (model_j_name %in% c("ols_x2", "glm_x2")) NA else ci[3,2]-ci[3,1],
                "sirina_B3" =  if (model_j_name %in% c("ols_x3", "glm_x3")) NA else ci[4,2]-ci[4,1],
                "B1" = as.numeric(model_j[[1]][2]),
-               "B2" = as.numeric(model_j[[1]][3]),
-               "B3" = as.numeric(model_j[[1]][4]),
+               "B2" = if (model_j_name %in% c("ols_x2", "glm_x2")) NA else as.numeric(model_j[[1]][3]),
+               "B3" = if (model_j_name %in% c("ols_x3", "glm_x3")) NA else as.numeric(model_j[[1]][4]),
                "confint_succes" = confint_success)
     
     # dodamo rezultate v results
