@@ -271,7 +271,7 @@ library("effectsize")
 library("lcmix")
 library("dplyr")
 
-source("rezultati_simulacije.R") # kasneje uporabi load (ko bodo simulacije shranjene s funkcijo "save")
+load("rezultati_simulacije.R")
 simulacija = as.data.frame(simulacija)
 ```
 
