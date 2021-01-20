@@ -22,7 +22,7 @@ gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # 
 # SIMULACIJE --------------------------------------------------------------
 
 # stevilo vzorcev v simulacijah
-m <- 1000
+m <- 10
 
 # korelacije, ki jih bomo upostevali
 korelacija <- seq(from = 0, to = 0.9, by = 0.3)
