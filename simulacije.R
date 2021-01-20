@@ -22,7 +22,7 @@ gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # 
 # SIMULACIJE --------------------------------------------------------------
 
 # stevilo vzorcev v simulacijah
-m <- 10
+m <- 1000
 
 # korelacije, ki jih bomo upostevali
 korelacija <- seq(from = 0, to = 0.9, by = 0.3)
@@ -95,6 +95,8 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
       }
     )
     
+    k <- if (grepl( "x2", model_j_name, fixed = TRUE)) 1 else 0
+    
     # generiramo rezultate
     res_j <- c("model" = model_j_name,
                "n" = n, 
@@ -102,14 +104,14 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                "alpha" = alpha ,
                "alpha_X" = alpha_X,
                "pokritost_B1" = (b[1]>ci[2,1]) & (b[1] < ci[2,2]), 
-               "pokritost_B2" = if (model_j_name %in% c("ols_x2", "glm_x2")) NA else (b[2]>ci[3,1]) & (b[2] < ci[3,2]), 
-               "pokritost_B3" = if (model_j_name %in% c("ols_x3", "glm_x3")) NA else (b[3]>ci[4,1]) & (b[3] < ci[4,2]), 
+               "pokritost_B2" = if (grepl( "x2", model_j_name, fixed = TRUE)) NA else (b[2]>ci[3,1]) & (b[2] < ci[3,2]), 
+               "pokritost_B3" = if (grepl( "x3", model_j_name, fixed = TRUE)) NA else (b[3]>ci[4-k,1]) & (b[3] < ci[4-k,2]), 
                "sirina_B1" =  ci[2,2]-ci[2,1], 
-               "sirina_B2" =  if (model_j_name %in% c("ols_x2", "glm_x2")) NA else ci[3,2]-ci[3,1],
-               "sirina_B3" =  if (model_j_name %in% c("ols_x3", "glm_x3")) NA else ci[4,2]-ci[4,1],
+               "sirina_B2" =  if (grepl( "x2", model_j_name, fixed = TRUE)) NA else ci[3,2]-ci[3,1],
+               "sirina_B3" =  if (grepl( "x3", model_j_name, fixed = TRUE)) NA else ci[4-k,2]-ci[4-k,1],
                "B1" = as.numeric(model_j[[1]][2]),
-               "B2" = if (model_j_name %in% c("ols_x2", "glm_x2")) NA else as.numeric(model_j[[1]][3]),
-               "B3" = if (model_j_name %in% c("ols_x3", "glm_x3")) NA else as.numeric(model_j[[1]][4]),
+               "B2" = if (grepl( "x2", model_j_name, fixed = TRUE)) NA else as.numeric(model_j[[1]][3]),
+               "B3" = if (grepl( "x3", model_j_name, fixed = TRUE)) NA else as.numeric(model_j[[1]][4-k]),
                "confint_succes" = confint_success)
     
     # dodamo rezultate v results
