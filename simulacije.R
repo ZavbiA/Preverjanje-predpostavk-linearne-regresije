@@ -47,7 +47,7 @@ cl <- makeCluster(no_cores)
 # PARALELNA SIMULACIJA za OLS
 registerDoParallel(cl)
 simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lcmix", "dplyr", "MASS", "lme4")) %dorng% {
-#for (i in 1:nrow(zasnova)){
+#for (i in 1:nrow(zasnova)){ #za debugging
   # uvozimo parametre 
   n <- zasnova[i, "n"]
   r <- zasnova[i, "korelacija"]
@@ -68,7 +68,7 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   X3 = X[,c(1,2)]
 
   
-  results <- c()
+  results_i <- c()
   models <- list("ols" = lm(Y ~ X),
                  "glm" = glm(Y ~ X, family = Gamma(link="identity")),
                  "glm_log" = glm(Y ~ X, family = Gamma(link="log")),
@@ -115,7 +115,7 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                "confint_succes" = confint_success)
     
     # dodamo rezultate v results
-    results_i <- rbind(results, res_j)
+    results_i <- rbind(results_i, res_j)
   }
   
   results_i
@@ -123,6 +123,6 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
 
 stopCluster(cl)
 head(simulacija)
-
+simulacija <- as.data.frame(simulacija)
 save("simulacija", file="rezultati_simulacije.R")
 
