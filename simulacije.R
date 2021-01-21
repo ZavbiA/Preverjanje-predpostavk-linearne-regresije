@@ -84,16 +84,17 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
     model_j_name <- names(models)[j]
     
     # izračunamo IZ, probamo z navadnim confint, če ne gre vzamemo confint.default
-    ci <-  tryCatch(
+    ci_data <-  tryCatch(
       error = function(cnd){
-        confint_success <- 0
-        confint.default(model_j)
+        list("ci"=confint.default(model_j),"confint_success"=0)
       },
       {
-        confint_success <- 1
-        confint(model_j)
+        list("ci"=confint(model_j),"confint_success"=1)
       }
     )
+    
+    ci = ci_data$ci
+    confint_success = ci_data$confint_success
     
     k <- if (grepl( "x2", model_j_name, fixed = TRUE)) 1 else 0
     
@@ -122,7 +123,7 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
 }
 
 stopCluster(cl)
-head(simulacija)
+# head(simulacija)
 simulacija <- as.data.frame(simulacija)
 save("simulacija", file="rezultati_simulacije.R")
 
