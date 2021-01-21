@@ -215,7 +215,8 @@ $$\sum_{i=1}^{n} X_i \sim Gamma(\sum_{i=1}^{n} k_i, \theta).$$
 
 Ker zaradi spreminjanja parametrov v gama porazdelitvi pri porazdelitvi napak ne spreminjamo samo asimetričnosti ampak tudi varianco in ker vemo, da ima različna varianca vpliv na model, smo spremenljivke napak skalirali. Napake smo skalirali tako, da smo vrednosti delili s teoretično standardno napako in tako poskrbeli, da imajo vse porazdelitve napak enako varianco. 
 
-Pri pregledu literature sva ugotovili, da za generiranje odvisnih gama spremenljivk lahko uporabimo kar funkcijo \emph{rmvgamma()} in si s tem olajšamo delo pri generiranju podatkov. Funkcija sprejme naslednje parametre: $n$ (število vektorjev, ki jih želimo generirati), $corr$ (korelacijska matrika) ter parametra `shape` in `rate`, ki sta privzeto nastavljena na 1. \textcolor{red}{Manjka še opis, kako funkcija generira vrednosti.}
+Pri pregledu literature sva ugotovili, da za generiranje odvisnih gama spremenljivk lahko uporabimo kar funkcijo \emph{rmvgamma()} iz paketa `lcmix` in si s tem olajšamo delo pri generiranju podatkov. Funkcija sprejme naslednje parametre: $n$ (število vektorjev, ki jih želimo generirati), $corr$ (korelacijska matrika) ter parametra `shape` in `rate`, ki sta privzeto nastavljena na 1. Kot rezultat dobimo matriko z $n$ vrsticami in $ncol(corr)$ stolpci (mvgamma, 2020).
+Koda, na podlagi katere funkcija generira vrednosti, je predstavljena v viru lcmix, 2021.
 
 ## Funkciji lm() in glm()
 
@@ -229,7 +230,7 @@ Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahk
 
 ## Ocenjevanje intervalov zaupanja
 
-Za ocenjevanje intervalov zaupanja pri obeh metodah uporabimo funkcijo \emph{confint.default}, ki računa intervale zaupanja na podlagi standrdnih napak. Najprej smo poskusili z uporabo navadne funkcije \emph{confint}, vendar je prihajalo do problemov pri posplošenih linearnih modelih. Slednja funkcija predpostavlja normalnost, funkcija \emph{confint.default} pa temelji na asimptotski normalnosti (confint iz RDocumentation, 2020). Za stopnjo zaupanja vzamemo $\alpha=0.05$.
+Za ocenjevanje intervalov zaupanja pri obeh metodah uporabimo funkcijo \emph{confint.default}, ki računa intervale zaupanja na podlagi standardnih napak. Najprej smo poskusili z uporabo navadne funkcije \emph{confint}, vendar je prihajalo do problemov pri posplošenih linearnih modelih. Slednja funkcija predpostavlja normalnost, funkcija \emph{confint.default} pa temelji na asimptotski normalnosti (confint iz RDocumentation, 2020). Za stopnjo zaupanja vzamemo $\alpha=0.05$.
 
 
 ## Pričakovanja
@@ -272,11 +273,12 @@ library("lcmix")
 library("dplyr")
 
 load("rezultati_simulacije.R")
-simulacija = as.data.frame(simulacija)
 ```
 
 Rezultati se nanašajo na veliko parametrov in za več različnih načinov modeliranja, zato si bomo rezultate ogledali na različne načine.
 Ker imata koeficienta $X_1$ in $X_2$ enak vpliv na odzivno spremenljivko, $X_3$ pa nima vpliva, se lahko osredotočimo le na koeficient $\beta_1$.
+
+Intervali zaupanja so generirani s pomočjo funkcije `confint()` oziroma v primeru, ko naletimo na `error`, s funkcijo `confint.default()`. Primerov, ko je bilo potrebno uporabiti slednjo funkcijo je `r nrow(simulacija)-sum(simulacija$confint_succes=="1")`.
 
 ## Polni model
 
@@ -667,6 +669,8 @@ Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliv
 
 # Viri
 
+- P. E. Johnson, \emph{GLM with a Gamma-distributed Dependent Variable}, [ogled 05.01.2020], dostopno na \url{https://pj.freefaculty.org/guides/stat/Regression-GLM/Gamma/GammaGLM-01.pdf?fbclid=IwAR14W34VhGzyG0wPiqNTk1hWjIToAug6a2TsPsTeZKLj_ntfTxaR1Aowiko}
+
 - V. Maver, \emph{Normalni linearni mešani modeli}, diplomsko delo, Fakulteta za matematiko in fiziko, Univerza v Ljubljani, 2018.
 
 - J. Jiang, \emph{Linear and Generalized Linear Mixed Models and Their Applications}, Springer Series in Statistics, Springer Science + Business Media, LLC, New York, 2007.
@@ -682,11 +686,13 @@ Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliv
 
 - L. Pfajfar, \emph{Osnovna ekonometrija}, učbeniki Ekonomske fakultete, Ljubljana, 2018.
 
-- P. E. Johnson, \emph{GLM with a Gamma-distributed Dependent Variable}, [ogled 05.01.2020], dostopno na \url{https://pj.freefaculty.org/guides/stat/Regression-GLM/Gamma/GammaGLM-01.pdf?fbclid=IwAR14W34VhGzyG0wPiqNTk1hWjIToAug6a2TsPsTeZKLj_ntfTxaR1Aowiko}
+- \emph{lcmix}, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/src/R/distributions.R} # Tukaj je koda, kako funkcija generira podatke.
+
+- \emph{mvgamma}, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/man/mvgamma.html} # Tukaj pa je opis funkcije, katere parametre sprejme in kaj vrne.
 
 # Priloge
 
-Vsa uporabljena koda se nahaja v priloženi datoteki `Simulacije.R`.
+Koda za simulacije se nahaja v priloženi datoteki `Simulacije.R`, njeni rezultati pa v datoteki `rezultati_simulacije.R`. Poročilo je bilo pripravljeno v `seminarska_RZM.Rmd` datoteki, ki vsebuje tudi kodo za grafe.
 
 Sledi izpis ANOVE za prvi in drugi model.
 
