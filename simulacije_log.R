@@ -47,7 +47,7 @@ cl <- makeCluster(no_cores)
 # PARALELNA SIMULACIJA za OLS
 registerDoParallel(cl)
 simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lcmix", "dplyr", "MASS", "lme4")) %dorng% {
-#for (i in 1:nrow(zasnova)){ #za debugging
+  #for (i in 1:nrow(zasnova)){ #za debugging
   # uvozimo parametre 
   n <- zasnova[i, "n"]
   r <- zasnova[i, "korelacija"]
@@ -59,22 +59,11 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   diag(corr_mtx) = 1
   X <- rmvgamma(n = n, shape=alpha_X, rate = 5, corr = corr_mtx)
   eps_noscaled <- rgamma(n = n, shape = alpha, rate = 5)
-  Y <- 1 + (X %*% b) + gammaScale2(eps_noscaled, shape = alpha, rate = 5)
-  
-  # ostranimo x2
-  X2 = X[,c(1,3)]
+  Y <- exp(1 + (X %*% b) + gammaScale2(eps_noscaled, shape = alpha, rate = 5))
 
-  # ostranimo x3
-  X3 = X[,c(1,2)]
-
-  
   results_i <- c()
-  models <- list("ols" = lm(Y ~ X),
-                 "glm" = glm(Y ~ X, family = Gamma(link="identity")),
-                 "ols_x2" = lm(Y ~ X2),
-                 "glm_x2" = glm(Y ~ X2, family = Gamma(link="identity")),
-                 "ols_x3" = lm(Y ~ X3),
-                 "glm_x3" = glm(Y ~ X3, family = Gamma(link="identity")))
+  models <- list("ols" = lm(log(Y) ~ X),
+                 "glm" = glm(Y ~ X, family = Gamma(link="log")))
   
   for (j in 1:length(models)){
     model_j <- models[[j]]
@@ -93,8 +82,6 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
     ci = ci_data$ci
     confint_success = ci_data$confint_success
     
-    k <- if (grepl( "x2", model_j_name, fixed = TRUE)) 1 else 0
-    
     # generiramo rezultate
     res_j <- c("model" = model_j_name,
                "n" = n, 
@@ -102,14 +89,14 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                "alpha" = alpha ,
                "alpha_X" = alpha_X,
                "pokritost_B1" = (b[1]>ci[2,1]) & (b[1] < ci[2,2]), 
-               "pokritost_B2" = if (grepl( "x2", model_j_name, fixed = TRUE)) NA else (b[2]>ci[3,1]) & (b[2] < ci[3,2]), 
-               "pokritost_B3" = if (grepl( "x3", model_j_name, fixed = TRUE)) NA else (b[3]>ci[4-k,1]) & (b[3] < ci[4-k,2]), 
+               "pokritost_B2" = (b[2]>ci[3,1]) & (b[2] < ci[3,2]), 
+               "pokritost_B3" = (b[3]>ci[4-k,1]) & (b[3] < ci[4-k,2]), 
                "sirina_B1" =  ci[2,2]-ci[2,1], 
-               "sirina_B2" =  if (grepl( "x2", model_j_name, fixed = TRUE)) NA else ci[3,2]-ci[3,1],
-               "sirina_B3" =  if (grepl( "x3", model_j_name, fixed = TRUE)) NA else ci[4-k,2]-ci[4-k,1],
+               "sirina_B2" =  ci[3,2]-ci[3,1],
+               "sirina_B3" =  ci[4-k,2]-ci[4-k,1],
                "B1" = as.numeric(model_j[[1]][2]),
-               "B2" = if (grepl( "x2", model_j_name, fixed = TRUE)) NA else as.numeric(model_j[[1]][3]),
-               "B3" = if (grepl( "x3", model_j_name, fixed = TRUE)) NA else as.numeric(model_j[[1]][4-k]),
+               "B2" = as.numeric(model_j[[1]][3]),
+               "B3" = as.numeric(model_j[[1]][4]),
                "confint_succes" = confint_success)
     
     # dodamo rezultate v results
@@ -121,6 +108,6 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
 
 stopCluster(cl)
 # head(simulacija)
-simulacija <- as.data.frame(simulacija)
-save("simulacija", file="rezultati_simulacije.R")
+simulacija_log <- as.data.frame(simulacija)
+save("simulacija_log", file="rezultati_simulacije_log.R")
 
