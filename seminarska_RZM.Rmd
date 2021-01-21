@@ -383,7 +383,7 @@ kable(sirina1, booktabs = F, align = "c")
 
 Številke v tabelah potrjujejo naša opažanja. Pri pokritosti je med metodama `glm` in `ols` manjša razlika in sicer je tokrat pokritost pri metodi `glm` višja za 0 do 1 o.t. Prav tako je manjša razlika v širini intervalov zaupanja. Ponovno pa velja, da se razlika v širini (procentualna) viša z večanjem velikosti vzorca. 
 
-## Vpliv ostranjevanja spremenljivk
+## Vpliv odstranjevanja spremenljivk
 
 Poglejmo si še vpliv izločanja spremenljivk in ali se ta vpliv razlikuje med posameznimi metodami ter pri različnih porazdelitvah pojasnjevalnih spremenljivk. 
 

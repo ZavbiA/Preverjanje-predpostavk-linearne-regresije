@@ -16,7 +16,7 @@ library("lcmix")
 # Ostanki bodo porazdeljeni Gamma(shape,rate) zato potrebujemo funkcije za standardizacijo
 gammaMean <- function(shape, rate) return(shape/rate)
 gammaVar <- function(shape, rate) return(shape/rate**2)
-gammaScale <- function(x, shape, rate) return((x-gammaMean(shape, rate))/sqrt(gammaVar(shape, rate))) # skaliranje variance
+gammaScale <- function(x, shape, rate) return((x-gammaMean(shape, rate))/sqrt(gammaVar(shape, rate))) # normalizacija variance
 gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # Samo delimo s std odklonom
 
 # SIMULACIJE --------------------------------------------------------------
@@ -58,8 +58,8 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   corr_mtx = matrix(r, nrow=3, ncol=3)
   diag(corr_mtx) = 1
   X <- rmvgamma(n = n, shape=alpha_X, rate = 5, corr = corr_mtx)
-  eps_noscaled <- rgamma(n = n, shape = alpha, rate = 5)
-  Y <- exp(1 + (X %*% b) + gammaScale2(eps_noscaled, shape = alpha, rate = 5))
+  eps_noscaled <- rgamma(n = n, shape = alpha, rate = 5) # poskusimo brez skaliranja
+  Y <- exp(1 + (X %*% b) + eps_noscaled) #gammaScale2(eps_noscaled, shape = alpha, rate = 5))
 
   results_i <- c()
   models <- list("ols" = lm(log(Y) ~ X),
@@ -90,10 +90,10 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                "alpha_X" = alpha_X,
                "pokritost_B1" = (b[1]>ci[2,1]) & (b[1] < ci[2,2]), 
                "pokritost_B2" = (b[2]>ci[3,1]) & (b[2] < ci[3,2]), 
-               "pokritost_B3" = (b[3]>ci[4-k,1]) & (b[3] < ci[4-k,2]), 
+               "pokritost_B3" = (b[3]>ci[4,1]) & (b[3] < ci[4,2]), 
                "sirina_B1" =  ci[2,2]-ci[2,1], 
                "sirina_B2" =  ci[3,2]-ci[3,1],
-               "sirina_B3" =  ci[4-k,2]-ci[4-k,1],
+               "sirina_B3" =  ci[4,2]-ci[4,1],
                "B1" = as.numeric(model_j[[1]][2]),
                "B2" = as.numeric(model_j[[1]][3]),
                "B3" = as.numeric(model_j[[1]][4]),
