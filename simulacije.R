@@ -16,8 +16,8 @@ library("lcmix")
 # Ostanki bodo porazdeljeni Gamma(shape,rate) zato potrebujemo funkcije za standardizacijo
 gammaMean <- function(shape, rate) return(shape/rate)
 gammaVar <- function(shape, rate) return(shape/rate**2)
-gammaScale <- function(x, shape, rate) return((x-gammaMean(shape, rate))/sqrt(gammaVar(shape, rate)))
-gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # Samo delimo z std odklonom
+gammaScale <- function(x, shape, rate) return((x-gammaMean(shape, rate))/sqrt(gammaVar(shape, rate))) # skaliranje variance
+gammaScale2 <- function(x, shape, rate) return(x/sqrt(gammaVar(shape, rate))) # Samo delimo s std odklonom
 
 # SIMULACIJE --------------------------------------------------------------
 
@@ -59,7 +59,7 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   diag(corr_mtx) = 1
   X <- rmvgamma(n = n, shape=alpha_X, rate = 5, corr = corr_mtx)
   eps_noscaled <- rgamma(n = n, shape = alpha, rate = 5)
-  Y <- 1 + (X %*% b) + gammaScale2(eps_noscaled, shape = alpha, rate = 5) # dodamo konstanto, sicer so problemi
+  Y <- 1 + (X %*% b) + gammaScale2(eps_noscaled, shape = alpha, rate = 5)
   
   # ostranimo x2
   X2 = X[,c(1,3)]
@@ -71,13 +71,13 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
   results <- c()
   models <- list("ols" = lm(Y ~ X),
                  "glm" = glm(Y ~ X, family = Gamma(link="identity")),
-                 "glm_inv" = glm(Y ~ X, family = Gamma(link="inverse")),
+                 "glm_log" = glm(Y ~ X, family = Gamma(link="log")),
                  "ols_x2" = lm(Y ~ X2),
                  "glm_x2" = glm(Y ~ X2, family = Gamma(link="identity")),
-                 "glm_inv_x2" = glm(Y ~ X2, family = Gamma(link="inverse")),
+                 "glm_log_x2" = glm(Y ~ X2, family = Gamma(link="log")),
                  "ols_x3" = lm(Y ~ X3),
                  "glm_x3" = glm(Y ~ X3, family = Gamma(link="identity")),
-                 "glm_inv_x3" = glm(Y ~ X3, family = Gamma(link="inverse")))
+                 "glm_log_x3" = glm(Y ~ X3, family = Gamma(link="log")))
   
   for (j in length(models)){
     model_j <- models[[j]]
