@@ -79,7 +79,7 @@ simulacija <- foreach(i = 1:nrow(zasnova), .combine = "rbind", .packages = c("lc
                  "glm_x3" = glm(Y ~ X3, family = Gamma(link="identity")),
                  "glm_log_x3" = glm(Y ~ X3, family = Gamma(link="log")))
   
-  for (j in length(models)){
+  for (j in 1:length(models)){
     model_j <- models[[j]]
     model_j_name <- names(models)[j]
     
