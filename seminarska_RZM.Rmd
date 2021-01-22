@@ -276,7 +276,7 @@ y <- dgamma(x,5,sqrt(5))
 plot(x,y, main = expression(paste("gamma(5,",sqrt(5),")",sep='')))
 ```
 
-V poglavju `Transformacija odzivne spremenljivke` skaliranja variance nismo uporabili. Razlog je v tem, da program občasno vrača opozorila `task failed - "NA/NaN/Inf in 'x'"`. Ker nas v resnici zanima le razlika med pristopoma \emph{lm} in \emph{glm}, nas različna varianca ostankov to pri interpretaciji ne zmoti.
+V poglavju `Transformacija odzivne spremenljivke` skaliranja variance nismo uporabili. Razlog je v tem, da program občasno vrača opozorila `task failed - "NA/NaN/Inf in 'x'"`. Ker nas v resnici zanima le razlika med pristopoma \emph{lm} in \emph{glm}, nas različna varianca ostankov pri interpretaciji ne zmoti.
 
 ## Pričakovanja
 
@@ -323,7 +323,7 @@ simulacija$model <- as.factor(simulacija$model) # ime modela pretvorimo v tip fa
 
 Izvedli smo 1000 ponovitev simulacij. Na vsakem koraku obravnavamo 4 različne korelacije, 5 različnih velikosti vzorca, 3 različne porazdelitve ostankov, 2 različni porazdelitvi pojasnjevalnih spremenljivk, 2 metodi (\emph{lm} in \emph{glm}) in 3 modele glede na število spremenljivk - iz tega sledi, da dobimo tabelo s 720 000 vrsticami.
 
-Intervali zaupanja so generirani s pomočjo funkcije `confint()` oziroma v primeru, ko naletimo na `error`, s funkcijo `confint.default()`. Primerov, ko je bilo potrebno uporabiti slednjo funkcijo, je `r nrow(simulacija)-sum(simulacija$confint_succes=="1")`, kar znaša `r nrow(simulacija)-sum(simulacija$confint_succes=="1")/nrow(simulacija)` % vseh ponovitev simulacij.
+Intervali zaupanja so generirani s pomočjo funkcije \emph{confint()} oziroma v primeru, ko naletimo na `error`, s funkcijo \emph{confint.default()}. Primerov, ko je bilo potrebno uporabiti slednjo funkcijo, je `r nrow(simulacija)-sum(simulacija$confint_succes=="1")`, kar znaša `r nrow(simulacija)-sum(simulacija$confint_succes=="1")/nrow(simulacija)` % vseh ponovitev simulacij.
 
 Rezultati se nanašajo na veliko parametrov in za več različnih načinov modeliranja, zato si bomo rezultate ogledali na različne načine.
 Ker imata koeficienta $X_1$ in $X_2$ enak vpliv na odzivno spremenljivko, $X_3$ pa nima vpliva, se lahko osredotočimo le na koeficient $\beta_1$.
@@ -332,7 +332,7 @@ Ker imata koeficienta $X_1$ in $X_2$ enak vpliv na odzivno spremenljivko, $X_3$ 
 
 ### Asimetrična porazdelitev pojasnjevalnih spremenljivk
 
-Za začetek si poglejmo rezultate oz. izbrane mere na polnem modelu, kjer so upoštevane vse spremenljivke pri bolj asimetrični porazdelitvi pojasnjevalnih spremenljivk. Naslednje dva grafa tako prikazujeta pokritost in širine intervalov zaupanja za koeficient $\beta_1$ za posamezen model (`gls` ali `ols`) glede na velikost vzorca in korelacijo. Črna črtkana črta na grafu pokritja označuje željeno pokritje (0.95).
+Za začetek si poglejmo rezultate oz. izbrane mere na polnem modelu, kjer so upoštevane vse spremenljivke pri bolj asimetrični porazdelitvi pojasnjevalnih spremenljivk. Naslednje dva grafa tako prikazujeta pokritost in širine intervalov zaupanja za koeficient $\beta_1$ za posamezen model (\emph{gls} ali \emph{ols}) glede na velikost vzorca in korelacijo. Črna črtkana črta na grafu pokritja označuje željeno pokritje (0.95).
 
 ```{r}
 pokritost <- c("pokritost_B1", "pokritost_B2", "pokritost_B3")
@@ -362,9 +362,9 @@ ggplot(data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1'
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Iz slik lahko vidimo, da imata precej očiten vpliv pri obeh metodah (`gls` in `ols`) korelacija in velikost vzorca. Z večanjem korelacije se sama pokritost ne spremeni bistveno, se pa močno povečajo intervali zaupanja, medtem ko z večanjem velikosti vzorca pridobimo večjo pokritost in ožje intervale zaupanja. Pri različnih stopnjah asimetrije ostankov pa ni opaziti bistvenega vpliva na rezultate.
+Iz slik lahko vidimo, da imata precej očiten vpliv pri obeh metodah (\emph{gls} in \emph{ols}) korelacija in velikost vzorca. Z večanjem korelacije se sama pokritost ne spremeni bistveno, se pa močno povečajo intervali zaupanja, medtem ko z večanjem velikosti vzorca pridobimo večjo pokritost in ožje intervale zaupanja. Pri različnih stopnjah asimetrije ostankov pa ni opaziti bistvenega vpliva na rezultate.
 
-Razberemo tudi, da ima model `glm` nekoliko boljšo pokritost, razlika je manjša pri manjših vzorcih. Velja pa tudi, da pri `glm` modelu dobimo nekoliko širše intervale zaupanja, od koder najverjetneje izhaja tudi boljša pokritost. Intervali zaupanja pri metodi ols so torej preozki, posledično pa interval zaupanja za koeficient večkrat ne vsebuje prave vrednosti koeficienta. Razlike v pokritosti sicer niso velike, vseeno pa so prisotne. Rezultati so za manjše število izbranih parametrov n in korelacije prikazani tudi v spodnjih dveh tabelah, kjer bomo lažje razbrali razlike. Prikazane razlike so v obeh primerih razlike glm glede na ols metodo, v tabeli s širino intervalov zaupanja so prikazane razlike še v deležu glede na širino intervala zaupanja pri metodi ols. 
+Razberemo tudi, da ima model \emph{glm} nekoliko boljšo pokritost, razlika je manjša pri manjših vzorcih. Velja pa tudi, da pri \emph{glm} modelu dobimo nekoliko širše intervale zaupanja, od koder najverjetneje izhaja tudi boljša pokritost. Intervali zaupanja pri metodi \emph{ols} so torej preozki, posledično pa interval zaupanja za koeficient večkrat ne vsebuje prave vrednosti koeficienta. Razlike v pokritosti sicer niso velike, vseeno pa so prisotne. Rezultati so za manjše število izbranih parametrov n in korelacije prikazani tudi v spodnjih dveh tabelah, kjer bomo lažje razbrali razlike. Prikazane razlike so v obeh primerih razlike \emph{glm} glede na \emph{ols} metodo, v tabeli s širino intervalov zaupanja so prikazane razlike še v deležu glede na širino intervala zaupanja pri metodi \emph{ols}. 
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -386,7 +386,7 @@ Velja torej, da ima v povprečju glm metoda od 1 do 2 o.t. boljšo pokritost, ve
 
 ### Manj simetrična porazdelitev pojasnjevalnih spremenljivk
 
-Enako kot smo si pogledali za asimetrično porazdelitev pojasnjevalnih spremenljivk si poglejmo še za nekoliko bolj simetrično porazdelitev. 
+Enako kot smo si pogledali za asimetrično porazdelitev pojasnjevalnih spremenljivk, poglejmo še za nekoliko bolj simetrično porazdelitev. 
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri polnem modelu in Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==5), aes(x = alpha, y = value, col = model)) +
@@ -406,7 +406,7 @@ ggplot(data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1'
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Ponovno hitro opazimo vpliv velikosti vzorca in korelacije ter da sama asimetrija ostankov nima bistvenega vpliva. Razlike med metodama sta tokrat nekoliko manj opazni, sploh kar se tiče pokritosti, za razlike v širinah intervalov zaupanja pa si moramo pogledati številke v tabelah, kjer bomo lažje razbrali ali so le-te manjše ali večje kot prej. Predvsem lahko opazimo, če primerjamo graf širine intervalov zaupanja s prejšnjih grafom kjer je upoštevana asimetrična porazdelitev, da so intervali v splošnem nekoliko ožji. 
+Ponovno hitro opazimo vpliv velikosti vzorca in korelacije ter da sama asimetrija ostankov nima bistvenega vpliva. Razlike med metodama so tokrat nekoliko manj opazne, sploh kar se tiče pokritosti. Za razlike v širinah intervalov zaupanja si moramo pogledati številke v tabelah, kjer bomo lažje razbrali ali so le-te manjše ali večje kot prej. Predvsem lahko opazimo, da če primerjamo graf širine intervalov zaupanja s prejšnjih grafom, kjer je upoštevana asimetrična porazdelitev, so intervali v splošnem nekoliko ožji. 
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -690,7 +690,7 @@ Ponovno nam prikaz in analiza variance potrjujeta naša predhodna opazovanja.
 ## Transformacija odzivne spremenljivke
 
 V tem poglavju so predstavljeni še rezultati simulacij, kjer je uporabljena logaritemska tranformacija.
-Pri teh simulacijah nas je zanimala predvsem razlika med uporabo transformacije v formuli funkcije \emph{lm} ($log(Y)=\beta X$) in uporabo logaritemske link funkcije v funkciji \emph{glm} ($link="log"$). Vseeno pa si bomo pogledali tudi razlike med rezultati pri različnih parametrih.
+Pri teh simulacijah nas je zanimala predvsem razlika med uporabo transformacije v formuli funkcije \emph{lm} ($log(Y)=\beta X$) in uporabo logaritemske link funkcije ($link="log"$) v funkciji \emph{glm}. Vseeno pa si bomo pogledali tudi razlike med rezultati pri različnih parametrih.
 
 ```{r}
 # Uvozimo še rezultate simulacij z logaritemsko transformacijo:
@@ -727,6 +727,8 @@ ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokrito
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "pokritost IZ")
 ```
 
+Na prvem grafu vidimo, da je pokritost IZ pri navadni linearni regresiji boljša kot pri linearnih modelih. Razlika je očitna predvsem pri manjših vzorcih, pri dovolj velikih pa praktično ni razlik (številke so razvidne v tabeli 17).
+
 ```{r fig.cap="Širina intervalov zaupanja za koeficient $\\beta_1$ pri Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_sirina %>% filter(model %in%c('ols','glm'), variable == 'sirina_B1', alpha_X==2), aes(x = alpha, y = value, col = model)) +
   facet_grid(n~korelacija, labeller = label_both, scales = "free") +
@@ -735,6 +737,9 @@ ggplot(data_sirina %>% filter(model %in%c('ols','glm'), variable == 'sirina_B1',
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
+Širina intervalov zaupanja je pri obeh metodah precej podobna, vendar se linearna regresija vseeno izkaže za malenkost boljšo. Razlike se povečujejo predvsem z večanjem korelacije med pojasnjevalnimi spremenljivkami in z večanjem vzorca (kar je bolje vidno v tabeli 18).
+Predvidevamo, da je večanje širine intervalov zaupanja s večanjem stopnje asimetrije ostankov povezano s tem, da variance tokrat nismo skalirali.
+Točne številke za širine in pokritosti IZ so predstavljene v naslednjih dveh tabelah.
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -763,6 +768,8 @@ ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokrito
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "pokritost IZ")
 ```
 
+Pri $Gamma(5,5)$ porazdelitvi pojasnjevalnih spremenljivk pridemo do podobnih zaključkov kot pri $Gamma(2,5)$. Pokritost pri \emph{lm} je boljša od pokritosti pri \emph{glm} metodi, razlike so večje pri manjših vzorcih. Stopnja asimetrije ostankov tu ne igra vloge, prav tako korelacija med pojasnjevalnimi spremenljivkami.
+
 ```{r fig.cap="Širina intervalov zaupanja za koeficient $\\beta_1$ pri Gamma(5,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_sirina %>% filter(model %in%c('ols','glm'), variable == 'sirina_B1', alpha_X==5), aes(x = alpha, y = value, col = model)) +
   facet_grid(n~korelacija, labeller = label_both, scales = "free") +
@@ -771,6 +778,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols','glm'), variable == 'sirina_B1',
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
+Slika 24 je zelo podobna Sliki 22, le da je skala širine IZ pomaknjena nekoliko višje. Predvsem pri manjših vzorcih je širina IZ v primeru porazdelitve $Gamma(2,5)$ v povprečju očitno večja od širine v primeru $Gamma(5,5)$. To opazimo, ko primerjamo tabeli 18 in 20.
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -791,7 +799,7 @@ kable(sirina1, booktabs = F, align = "c", caption = "Širina intervalov zaupanja
 ### Analiza variance
 
 ```{r  results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za pokritost intervala zaupanja"}
-par(mar = c(5.1, 3.1, 4.1, 1))
+par(mar = c(5.1, 3.1, 4.1, 3))
 simulacija$n <- as.factor(as.character(simulacija_log$n))
 simulacija$korelacija <- as.factor(as.character(simulacija_log$korelacija))
 simulacija$model <- as.factor(as.character(simulacija_log$model))
@@ -801,11 +809,13 @@ plot(eta_squared(model3))
 ```
 
 
+
 ```{r results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
 par(mar = c(5.1, 3.1, 4.1, 1))
 model4 <- aov(sirina_B1 ~ n * korelacija * model *  alpha, data = as.data.frame(simulacija_log))
 plot(eta_squared(model4))
 ```
+
 
 
 # Ugotovitve
@@ -842,9 +852,9 @@ Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliv
 
 - L. Pfajfar, \emph{Osnovna ekonometrija}, učbeniki Ekonomske fakultete, Ljubljana, 2018.
 
-- \emph{lcmix}, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/src/R/distributions.R} # Tukaj je koda, kako funkcija generira podatke.
+- \emph{lcmix}, v: rdrr.io, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/src/R/distributions.R}
 
-- \emph{mvgamma}, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/man/mvgamma.html} # Tukaj pa je opis funkcije, katere parametre sprejme in kaj vrne.
+- \emph{mvgamma}, v: rdrr.io, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/man/mvgamma.html}
 
 - K. Siegrist, \emph{5.8. The Gama Distribution}, [ogled 20.01.2020], dostopno na \url{https://stats.libretexts.org/Bookshelves/Probability_Theory/Book%3A_Probability_Mathematical_Statistics_and_Stochastic_Processes_(Siegrist)/05%3A_Special_Distributions/5.08%3A_The_Gamma_Distribution}
 
