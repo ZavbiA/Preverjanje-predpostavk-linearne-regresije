@@ -213,10 +213,30 @@ Pri generiranju podatkov bomo spreminjali sledeče:
 Pri generiranju koreliranih gama spremenljivk lahko uporabimo sledečo lastnost: Če $X_i \sim Gamma(k_i, \theta)$, potem je
 $$\sum_{i=1}^{n} X_i \sim Gamma(\sum_{i=1}^{n} k_i, \theta).$$
 
-Ker zaradi spreminjanja parametrov v gama porazdelitvi pri porazdelitvi napak ne spreminjamo samo asimetričnosti ampak tudi varianco in ker vemo, da ima različna varianca vpliv na model, smo spremenljivke napak skalirali. Napake smo skalirali tako, da smo vrednosti delili s teoretično standardno napako in tako poskrbeli, da imajo vse porazdelitve napak enako varianco. 
-
 Pri pregledu literature sva ugotovili, da za generiranje odvisnih gama spremenljivk lahko uporabimo kar funkcijo \emph{rmvgamma()} iz paketa `lcmix` in si s tem olajšamo delo pri generiranju podatkov. Funkcija sprejme naslednje parametre: $n$ (število vektorjev, ki jih želimo generirati), $corr$ (korelacijska matrika) ter parametra `shape` in `rate`, ki sta privzeto nastavljena na 1. Kot rezultat dobimo matriko z $n$ vrsticami in $ncol(corr)$ stolpci (mvgamma, 2020).
 Koda, na podlagi katere funkcija generira vrednosti, je predstavljena v viru lcmix, 2021.
+
+Prikaz porazdelitev, na podlagi katerih so generirane pojasnjevalne spremenljivke in ostanki, je predstavljen na naslednji sliki.
+
+```{r fig.cap="Različne porazdelitve gama"}
+par(mfrow=c(2,2))
+
+x <- seq(0,5,.001)
+y <- dgamma(x,1,5)
+plot(x,y, main="gamma(1,5)")
+
+x <- seq(0,5,.001)
+y <- dgamma(x,2,5)
+plot(x,y, main="gamma(2,5)")
+
+x <- seq(0,5,.001)
+y <- dgamma(x,3,5)
+plot(x,y, main="gamma(3,5)")
+
+y <- dgamma(x,5,5)
+plot(x,y, main="gamma(5,5)")
+```
+
 
 ## Funkciji lm() in glm()
 
@@ -233,6 +253,26 @@ Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahk
 Za ocenjevanje intervalov zaupanja pri obeh metodah uporabimo funkcijo \emph{confint.default}, ki računa intervale zaupanja na podlagi standardnih napak. Najprej smo poskusili z uporabo navadne funkcije \emph{confint}, vendar je prihajalo do problemov pri posplošenih linearnih modelih. Slednja funkcija predpostavlja normalnost, funkcija \emph{confint.default} pa temelji na asimptotski normalnosti (confint iz RDocumentation, 2020). Za stopnjo zaupanja vzamemo $\alpha=0.05$.
 
 
+## Skaliranje variance
+
+Ker zaradi spreminjanja parametrov v gama porazdelitvi pri porazdelitvi napak ne spreminjamo samo asimetričnosti ampak tudi varianco in ker vemo, da ima različna varianca vpliv na model, smo spremenljivke napak skalirali. Napake smo skalirali tako, da smo vrednosti delili s teoretično standardno napako in tako poskrbeli, da imajo vse porazdelitve napak enako varianco. 
+
+Če je spremenljivka $X$ porazdeljena po $Gamma(\alpha, \beta)$, je njena pričakovana vrednost enaka $\frac{\alpha}{\beta}$, varianca pa $\frac{\alpha}{\beta^2}$. Za to spremenljivko in neko konstanto $c$ velja $cX \sim Gamma(\alpha, \frac{\beta}{c})$. To lastnost uporabimo pri skaliranju variance in sicer tako, da vrednosti delimo s $\sqrt{\frac{\alpha}{\beta^2}}=\frac{\sqrt{\alpha}}{\beta}$. Tako dobimo skalirano spremenljivko: $\frac{\beta}{\sqrt{\alpha}}X \sim Gamma(\alpha, \sqrt{\alpha})$.
+
+```{r fig.cap="Skalirane porazdelitve ostankov"}
+par(mfrow=c(2,2))
+
+y <- dgamma(x,1,sqrt(2))
+plot(x,y, main = expression(paste("gamma(1,",sqrt(1),")",sep='')))
+
+y <- dgamma(x,3,sqrt(2))
+plot(x,y, main = expression(paste("gamma(3,",sqrt(3),")",sep='')))
+
+y <- dgamma(x,5,sqrt(5))
+plot(x,y, main = expression(paste("gamma(5,",sqrt(5),")",sep='')))
+```
+
+
 ## Pričakovanja
 
 Pri večji korelaciji med pojasnjevalnimi spremenljivkami pričakujemo širše intervale zaupanja regresijskih koeficientov ne glede na izbiro metode. Zaradi večje širine intervalov zaupanja ne pričakujemo večjih sprememb v pokritosti.
@@ -244,17 +284,6 @@ Pričakujemo, da lahko kršenje predpostavke o normalni porazdeljenosti ostankov
 V primeru, ko iz modela izločimo spremenljivko $X_3$, ne pričakujemo posebnih sprememb v rezultatih, saj spremenljivka nima vpliva na vrednost pojasnjevalne spremenljivke. V primeru, ko izločimo spremenljivko $X_2$, pa pričakujemo spremembe v rezultatih - širše intervale zaupanja regresijskih koeficientov in slabšo pokritost.
 
 Porazdelitev pojasnjevalnih spremenljivk preverimo za dve porazdelitvi - $gama(2,5)$, ki je precej asimetrična in $gama(5,5)$, ki je zelo podobna normalni porazdelitvi. Zanima nas, če in kako asimetrija pojasnjevalnih spremenljivk vpliva na ocene regresijskih koeficientov. Pričakujemo, da bo v primeru asimetrične porazdelitve prišlo do manjše pokritosti in večje širine intervalov zaupanja.
-
-```{r fig.cap="Različni porazdelitvi gama"}
-par(mfrow=c(1,2))
-
-x <- seq(0,5,.001)
-y <- dgamma(x,1,5)
-plot(x,y, main="gamma(2,5)")
-
-y <- dgamma(x,5,5)
-plot(x,y, main="gamma(5,5)")
-```
 
 # Predstavitev rezultatov
 
@@ -272,7 +301,26 @@ library("effectsize")
 library("lcmix")
 library("dplyr")
 
+# Uvozimo rezultate simulacij:
 load("rezultati_simulacije.R")
+for (j in c(2:5,9:15)){ # stolpce pretvorimo v numeric, ker so shranjeni kot character
+  simulacija[,j] <- as.numeric(simulacija[,j])
+}
+for (j in c(6:8)){ # stolpce pretvorimo v factor, ker so shranjeni kot character
+  simulacija[,j] <- as.logical(simulacija[,j])
+  simulacija[,j] <- as.numeric(simulacija[,j])
+}
+simulacija$model <- as.factor(simulacija$model) # ime modela pretvorimo v tip factor
+
+# Uvozimo še rezultate simulacij z logaritemsko transformacijo:
+load("rezultati_simulacije_log.R")
+for (j in c(2:5,9:15)){ # stolpce pretvorimo v numeric, ker so shranjeni kot character
+  simulacija_log[,j] <- as.numeric(simulacija_log[,j])
+}
+for (j in c(6:8)){ # stolpce pretvorimo v factor, ker so shranjeni kot character
+  simulacija_log[,j] <- as.logical(simulacija_log[,j])
+}
+simulacija_log$model <- as.factor(simulacija_log$model) # ime modela pretvorimo v tip factor
 ```
 
 Rezultati se nanašajo na veliko parametrov in za več različnih načinov modeliranja, zato si bomo rezultate ogledali na različne načine.
@@ -287,27 +335,26 @@ Intervali zaupanja so generirani s pomočjo funkcije `confint()` oziroma v prime
 Za začetek si poglejmo rezultate oz. izbrane mere na polnem modelu, kjer so upoštevane vse spremenljivke in pri asimetrični porazdelitvi spremenljivke $X$. Naslednje dva grafa tako prikazujeta pokritost in širine intervalov zaupanja za koeficient $\beta_1$ za posamezen model (`gls` ali `ols`) glede na velikost vzorca in korelacijo. 
 
 ```{r}
-pokritost <- c("pokritost_B0", "pokritost_B1", "pokritost_B2", "pokritost_B3")
+pokritost <- c("pokritost_B1", "pokritost_B2", "pokritost_B3")
 sirina <- c()
 data_pokritost <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha_X", "n"), measure.vars = pokritost)
 data_pokritost$korelacija = data_pokritost$korelacija %>% round(1)
-sirina <- c("sirina_B0", "sirina_B1", "sirina_B2", "sirina_B3")
+sirina <- c("sirina_B1", "sirina_B2", "sirina_B3")
 data_sirina <- melt(simulacija, id.vars = c("model","korelacija", "alpha","alpha_X", "n"), measure.vars = sirina)
 data_sirina$korelacija = data_sirina$korelacija %>% round(1)
 ```
 
-
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
-ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==2), aes(x = alpha, y = value, col = model)) +
-  geom_hline(yintercept=1)+ 
+ggplot(data_pokritost %>% filter(model %in% c("ols","glm"), variable == "pokritost_B1", alpha_X==2), aes(x = alpha, y = value, col = model)) +
+  geom_hline(yintercept=1) + 
   facet_grid(n~korelacija, labeller = label_both, scales = "free") +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
   labs(x = "stopnja asimetrije ostankov (alpha)", y = "pokritost IZ")
 ```
 
-```{r fig.cap="Širina intervalov zaupanja za koeficient $\\beta_1$ pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 
+```{r fig.cap="Širina intervalov zaupanja za koeficient $\\beta_1$ pri polnem modelu in Gamma(2,5) porazdelitvi pojasnjevalnih spremenljivk"}
 ggplot(data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1', alpha_X==2), aes(x = alpha, y = value, col = model)) +
   facet_grid(n~korelacija, labeller = label_both, scales = "free") +
   stat_summary(fun = mean, geom="line") +
@@ -679,7 +726,7 @@ Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliv
 
 - \emph{lm}, v: RDocumentation, [ogled 30.12.2020], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/lm}.
 
-- \emph{confint}, v: RDocumentation, [ogled 02.01.2020], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/confint}
+- \emph{confint}, v: RDocumentation, [ogled 02.01.2021], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/confint}
 
 - M. Raič, \emph{O linearni regresijji}, 2014. Najdeno na spletnem naslovu:
 \url{http://valjhun.fmf.uni-lj.si/~raicm/Odlomki/Linearna_regresija.pdf}
