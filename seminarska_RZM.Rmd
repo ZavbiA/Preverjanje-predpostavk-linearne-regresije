@@ -718,7 +718,7 @@ data_sirina$korelacija = data_sirina$korelacija %>% round(1)
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri $X_i \\sim Gamma(2,5)$"}
 ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==2), aes(x = alpha, y = value, col = model)) +
-  geom_hline(yintercept=1)+ 
+  geom_hline(yintercept=0.95, linetype="dashed")+ 
   facet_grid(n~korelacija, labeller = label_both, scales = "free") +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
@@ -758,7 +758,7 @@ kable(sirina1, booktabs = F, align = "c", caption = "Širina intervalov zaupanja
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri $X_i \\sim Gamma(5,5)$"}
 ggplot(data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==5), aes(x = alpha, y = value, col = model)) +
-  geom_hline(yintercept=1)+ 
+  geom_hline(yintercept=0.95, linetype="dashed")+
   facet_grid(n~korelacija, labeller = label_both, scales = "free") +
   stat_summary(fun = mean, geom="line") +
   stat_summary(fun = mean, geom="point") +
@@ -868,6 +868,14 @@ Omeniti je še smiselno, da smo pri manj asimetrični porazdelitvi pojasnjevalni
 - \emph{mvgamma}, v: rdrr.io, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/man/mvgamma.html}
 
 - K. Siegrist, \emph{5.8. The Gama Distribution}, [ogled 20.01.2021], dostopno na \url{https://stats.libretexts.org/Bookshelves/Probability_Theory/Book%3A_Probability_Mathematical_Statistics_and_Stochastic_Processes_(Siegrist)/05%3A_Special_Distributions/5.08%3A_The_Gamma_Distribution}
+
+- R. Lockhart, \empf{STAT 350: Estimating Eauations}, [ogled 21.1.2021], dostopno na \url{https://www.sfu.ca/~lockhart/richard/350/08_2/lectures/GLMTheory/web.pdf}
+
+- spletni vir, [ogled 21.1.2021], dostopno na \url{https://www.sagepub.com/sites/default/files/upm-binaries/21121_Chapter_15.pdf}
+
+- H. Turner, \empf{Introduction to Generalized Linear Models}, [ogled 22.1.2021], dostopno na \url{http://statmath.wu.ac.at/courses/heather_turner/glmCourse_001.pdf}
+
+- A. Bhandari, \empf{What is Multicollinearity? Here’s Everything You Need to Know}, [ogled 18.1.2021], dostopno na \url{https://www.analyticsvidhya.com/blog/2020/03/what-is-multicollinearity/}
 
 # Priloge
 
