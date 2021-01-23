@@ -13,40 +13,39 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Teoretični del
 
-Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. V tem poglavjubomo predstavili, kaj so linearni in posplošeni linearni modeli in metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente modela. 
+Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. V tem poglavju bomo predstavili, kaj so linearni in posplošeni linearni modeli ter metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente modela. 
 
 ## Linearna regresija
 
 Linearna regresija je statistični model, ki ga v najbolj enostavni obliki lahko zapišemo kot:
 $$Y_{i} = \beta_{0} + \beta_{1} x_{i} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ med seboj neodvisne slučajne spremenljivke, $x_{i}$ pa dane vrednosti.
-Velja $\epsilon_{i} \sim N(0, \sigma^{2})$ za vsak $i$ in tako $Y_{i} \sim N(\beta_{0} + \beta_{1}x_{i},\ \sigma^{2})$. Model lahko razširimo na več linearnih parametrov: $$Y_{i} = \beta_{0} + \beta_{1} x_{i1} + \dots +\beta_{p} x_{ip} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ neodvisne enako porazdeljene slučajne spremenljivke, za $1\leq i\leq n$.
+Velja $\epsilon_{i} \sim N(0, \sigma^{2})$ za vsak $i$ in tako $Y_{i} \sim N(\beta_{0} + \beta_{1}x_{i},\ \sigma^{2})$. Model lahko razširimo na več linearnih parametrov: $$Y_{i} = \beta_{0} + \beta_{1} x_{i1} + \dots +\beta_{p} x_{ip} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ neodvisne enako porazdeljene slučajne spremenljivke in $1\leq i\leq n$ (Pfajfar, 2018).
 
 Lahko ga zapišemo tudi v matrični obliki: $$Y = X \beta + \epsilon.$$
 
-Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Z naraščanjem multikolinearnosti narašča tudi varianca ocen regresijskih koeficientov, kar pa vpliva tudi na značilnost samih koeficientov, ki so zato pogosto neznačilni. Ne vpliva pa na vrednost $R^2$, torej prvi indikator multikolinearnosti je visoka vrednost $R^2$ pri statistični neznačilnosti večine ocenjenih regresijskih koeficientov. Še pred izdelavo modela pa lahko pogledamo korelacijske koeficiente med pojasnjevalnimi spremenljivkami, ki ne smejo biti močno povezane. Močno povezane spremenljivke kot je že omenjeno, povzročajo multikolinearnost. Multikolinearnost pa lahko odkrivamo tudi z uporabo ANOVE, izračunom variančnega inflacijskega faktorja in še z drugimi pristopi. 
+Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Z naraščanjem multikolinearnosti narašča tudi varianca ocen regresijskih koeficientov, kar pa vpliva tudi na značilnost samih koeficientov, ki so zato pogosto neznačilni. Ne vpliva pa na vrednost $R^2$. Prvi indikator multikolinearnosti je torej visoka vrednost $R^2$ pri statistični neznačilnosti večine ocenjenih regresijskih koeficientov (Pfajfar, 2018).
+Še pred izdelavo modela pa lahko pogledamo korelacijske koeficiente med pojasnjevalnimi spremenljivkami, ki ne smejo biti močno povezane. Kot je bilo že omenjeno, močno povezane spremenljivke povzročajo multikolinearnost. Lahko pa jo odkrivamo tudi z uporabo ANOVE, izračunom variančnega inflacijskega faktorja in še z drugimi pristopi (Bhandari, 2020). 
 
 Opazovanja so med seboj neodvisna. V primeru kršenja te predpostavke je smiselno uporabiti posplošene linearne modele, običajno longitudinalni (vzdolžni) model.
 Vse predpostavke linearnega regresijskega modela so navedene v naslednjem razdelku.
 
 ## Linearni modeli
 
-Cilj linearne regresije je oceniti vpliv neodvisnih spremenljivk na odvisno spremenljivko. Poseben primer regresije so linearni modeli. 
+Cilj linearne regresije je oceniti vpliv neodvisnih spremenljivk na odvisno spremenljivko. Ker spada pod posplošene linearne modele, si poglejmo še nekaj teorije o linearih modelih.
 
 ### Normalni linearni model
 
-Normalni linearen model zapišemo kot
+Normalni linearni model zapišemo kot
 
 $$y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \cdots + \beta_{p-1}x_{i,p-1} + \epsilon_i,$$
 
 kjer velja $\epsilon_i\sim N(0,\sigma^2)$.
 
-Normalni linearni model rešujem z metodo najmanjših kvadratov ali pa z metodo največjega verjetja, kjer maksimiziramo log-verjetnostno funkcijo.
+Parametre v normalnem linearnem modelu lahko ocenjujemo z metodo najmanjših kvadratov ali pa z metodo največjega verjetja, kjer maksimiziramo log-verjetnostno funkcijo.
+V našem primeru bomo za ocenjevanje parametrov pri linearni regresiji uporabljali funkcijo `lm`, ki v splošnem uporablja osnovno metodo najmanjših kvadratov (MNK ali angleško OLS), zato v je v nadaljevanju podrobneje predstavljena samo ta metoda.
 
-V našem primeru bomo za ocenjevanje parametrov pri linearni regresiji uporabljali funkcijo `lm`, ki v splošnem uporablja metodo najmanjših kvadratov (OLS), zato v je v nadaljevanju podrobneje predstavljena samo ta metoda.
-
-Metodo najmanjših kvadratov (MNK) je pri 16 letih odkril nemški matematik Carl F. Gauss. Zaradi svojih lastnosti je najbolj razširjena metoda ocenjevanja regresijskih koeficientov 
+Metodo najmanjših kvadratov je pri 16 letih odkril nemški matematik Carl F. Gauss. Zaradi svojih lastnosti je najbolj razširjena metoda ocenjevanja regresijskih koeficientov 
 (Pfajfar, 2018, str.53).
-
 Pri MNK na primeru osnovnega regresijskega modela velikosti $p=1$ iščemo $\beta_{0}$ in $\beta{1}$ tako, da bo vsota kvadratov ostankov najmanjša možna. Pri danih $(x_{i}, y_{i})$ torej iščemo $$\min_{\beta_{0}, \beta_{1}} \sum_{i=1}^{n} (y_{i} - \beta_{0} - \beta_{1}x_{i})^{2}.$$
 
 Za razumevanje oznak v predpostavkah metode ločimo dva modela, in sicer linearni vzorčni regresijski model $y_i=b_1+b_2x_i+e_i$ in linearni populacijski regresijski model $y=\beta_1+\beta_2x_i+u_i$.
@@ -73,11 +72,11 @@ Pfajfar (2018) navaja naslednje predpostavke metode najmanjših kvadratov:
 - slučajna spremenljivka $u$ je normalno porazdeljena: $u_i \sim N(0,\sigma_u^2)$.
 Posledično je pogojna porazdelitev odvisne spremenljivke $y$ tudi normalna in sicer $N(\beta_1x_{1i}+...+\beta_kx_{ki},\sigma_u^2)$
 
-Normalni linearni model ima zaradi potrebnih predpostavk, kar nekaj omejitev. Kadar ni izpolnjena predpostavka o normalni porazdelitvi ostankov in odvisne spremenljivke, si lahko pomagamo z raznimi transformacijami, s katerimi preoblikujemo odvisno spremenljivko tako, da s transformacijo dobimo normalno porazdelitev $g(y_i)\sim N(x_i^T\beta,\sigma^2)$, ali pa si pomagamo s posplošenimi linearnimi modeli.
+Normalni linearni model ima zaradi potrebnih predpostavk kar nekaj omejitev. Kadar ni izpolnjena predpostavka o normalni porazdelitvi ostankov in odvisne spremenljivke, si lahko pomagamo z raznimi transformacijami, s katerimi preoblikujemo odvisno spremenljivko tako, da s transformacijo dobimo normalno porazdelitev $g(y_i)\sim N(x_i^T\beta,\sigma^2)$, ali pa si pomagamo s posplošenimi linearnimi modeli.
 
 ### Posplošeni linearni modeli
 
-Pri posplošenih linearnih modelih za razliko od normalnega modela ne potrebujemo izpolnjenih predpostavk o normalnosti in homoskedastičnosti. Dovoljene so porazdelitve odvisne spremenljivke iz različnih družin. Regresijski koeficienti so ocenjeni po metodi največjega verjetja. Modeli so sestavljeni iz več komponent. Pri modeliranju s posplošenimi linearnimi modeli moramo najprej izbrati porazdelitveno družino. V naši seminarski nalogi, si bomo pogledali enoparametrične verjetnostne porazdelitve, ki pripadajo eksponentni družini, saj bomo le-te tudi uporabili v nadaljevanju. 
+Pri posplošenih linearnih modelih za razliko od normalnega modela ne potrebujemo izpolnjenih predpostavk o normalnosti in homoskedastičnosti. Dovoljene so porazdelitve odvisne spremenljivke iz različnih družin. Regresijski koeficienti so običajno ocenjeni po metodi največjega verjetja. Modeli so sestavljeni iz več komponent. Pri modeliranju s posplošenimi linearnimi modeli moramo najprej izbrati porazdelitveno družino. V tej seminarski nalogi si bomo pogledali enoparametrične verjetnostne porazdelitve, ki pripadajo eksponentni družini, saj bomo le-te uporabili v nadaljevanju. 
 
 Komponente posplošenih linearnih modelov so tako:
 
@@ -132,3 +131,5 @@ Tako oceno $\hat{\beta}$ izračunamo iterativno z uteženimi najmanjšimi kvadra
 2. izračunamo $z_i^{(k)}$ in uteži $w_i^{(k)}$
 3. izračunamo $\beta^{(k+1)}$ z uteženimi najmanjšimi kvadrati
 4. ponavljamo koraka $2$ in $3$, dokler ne dosežemo konvergence
+
+(http://statmath.wu.ac.at/courses/heather_turner/glmCourse_001.pdf)
