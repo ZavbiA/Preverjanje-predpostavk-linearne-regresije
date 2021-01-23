@@ -408,7 +408,7 @@ ggplot(data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1'
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Ponovno hitro opazimo vpliv velikosti vzorca in korelacije ter da sama asimetrija ostankov nima bistvenega vpliva na ocene regresijskih koeficientov. Razlike med metodama so tokrat nekoliko manj očitne, vseeno pa opazimo, da je pri \emph{glm} metodi pokritost pri večjih vzorcih boljša od pokritosti pri \emph{ols} metodi.
+Ponovno hitro opazimo vpliv velikosti vzorca in korelacije ter dejstvo, da sama asimetrija ostankov nima bistvenega vpliva na ocene regresijskih koeficientov. Razlike med metodama so tokrat nekoliko manj očitne, vseeno pa opazimo, da je pri \emph{glm} metodi pokritost pri večjih vzorcih boljša od pokritosti pri \emph{ols} metodi.
 Kar se tiče širine IZ, so tokrat razlike res majhne z izjemo majhnega vzorca ($n=10$) in visoke korelacije ($0.9$). Ponovno ima torej metoda \emph{glm} pri večjih vzorcih boljšo pokritost (a širše intervale zaupanja) kot druga metoda.
 Za razlike v širinah intervalov zaupanja si moramo pogledati številke v tabelah, kjer bomo lažje razbrali ali so le-te manjše ali večje kot prej. Predvsem lahko opazimo, da če primerjamo graf širine intervalov zaupanja s prejšnjih grafom, kjer je upoštevana asimetrična porazdelitev, so intervali v splošnem nekoliko ožji.
 
@@ -427,11 +427,11 @@ sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols) %>% round(2)
 kable(sirina1, booktabs = F, align = "c", caption = "Širina intervalov zaupanja za koeficient $\\beta_1$ pri polnem modelu in $Gamma(5,5)$ porazdelitvi pojasnjevalnih spremenljivk")
 ```
 
-Številke v tabelah potrjujejo naša opažanja. Med metodama `glm` in `ols` je pri pokritosti manjša razlika in sicer je pri dovolj velikih vzorcih tokrat pokritost pri metodi `glm` višja za do 1 o.t. Prav tako je manjša razlika v širini intervalov zaupanja. Ponovno pa velja, da se (procentualna) razlika v širini z večanjem velikosti vzorca povečuje vprid metode \emph{glm}.
+Številke v tabelah potrjujejo naša opažanja. Med metodama `glm` in `ols` je pri pokritosti manjša razlika in sicer je pri dovolj velikih vzorcih tokrat pokritost pri metodi `glm` višja za do 1 o.t. Prav tako je manjša razlika v širini intervalov zaupanja. Ponovno pa velja, da se (procentualna) razlika v širini z večanjem velikosti vzorca povečuje v prid metode \emph{glm}.
 
 ## Vpliv odstranjevanja spremenljivk
 
-Poglejmo si še vpliv izločanja spremenljivk. Zanima nas, kakšen je ta vpliv, ali se razlikuje med metodama in ali se razlikuje med različno asimetričnimi porazdelitvami pojasnjevalnih spremenljivk. 
+Poglejmo si še vpliv izločanja spremenljivk. Zanima nas, kakšen je ta vpliv, ali se razlikuje med metodama in ali se razlikuje med različno asimetričnima porazdelitvama pojasnjevalnih spremenljivk. 
 
 ### Zelo asimetrična porazdelitev pojasnjevalnih spremenljivk
 
@@ -471,7 +471,7 @@ sirina1 <- data_sirina %>% filter(model %in%  c('glm','glm_x2','glm_x3'), variab
 kable(sirina1, booktabs = F, align = "c", caption = "Širina intervalov zaupanja za koeficient $\\beta_1$ pri GLM in $Gamma(2,5)$ porazdelitvi pojasnjevalnih spremenljivk")
 ```
 
-Poglejmo si še razlike med metodama, kjer v modelu izključimo eno od spremenljivk. 
+Poglejmo si še razlike med rezultati funkcij \emph{glm} in \emph{lm}, ko v modelu izključimo eno od spremenljivk. 
 Najprej si poglejmo rezultate modela brez $X_2$.
 
 ```{r fig.cap="Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri modelu brez $X_2$ in $Gamma(2,5)$ porazdelitvi pojasnjevalnih spremenljivk"}
@@ -568,7 +568,7 @@ ggplot(data_sirina %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable ==
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Rezultati so na videz podobni tistim z bolj asimetrično porazdelitvijo pojasnjevalnih spremenljivk.
+Rezultati so na videz podobni tistim z bolj asimetrično porazdelitvijo pojasnjevalnih spremenljivk. Vplivi ostalih parametrov, ki jih spreminjamo, ostajajo enaki, smo pa z večjo asimetrijo porazdelitve pojasnjevalnih spremenljivk dobili ožje intervale zaupanja in malenkost slabšo pokritost (razlika je približno $1$ o.t. in je vidna, če primerjamo številske tabele).
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -602,7 +602,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x2','glm_x2'), variable == 'sirin
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Rezultati so podobni kot v primeru polnega modela, vseeno pa je razlika v pokritosti nekoliko višja. Večjo pokritost ima metoda glm, hkrati pa širše intervale zaupanja.
+Pri pokritosti v modelih brez $X_2$ opazimo večje razlike v primerjavi z bolj asimetrično porazdelitvijo pojasnjevalnih spremenljivk. Tokrat imamo predvsem pri večjih vzorcih pokritost precej slabšo kot prej (primerjava tabel 7 in 13), vendar pa to lahko pripišemo predvsem ožjim intervalom zaupanja (primerjava tabel 8 in 14).
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -638,7 +638,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x3','glm_x3'), variable == 'sirin
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Rezultati so ponovno zelo podobni kot v primeru polnega modela.
+Pri modelih brez spremenljivke $X_3$ v primeru bolj simetrične porazdelitve $Gamma(5,5)$ opazimo
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x3','glm_x3'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -733,9 +733,9 @@ ggplot(data_sirina %>% filter(model %in%c('ols','glm'), variable == 'sirina_B1',
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Na Sliki 21 vidimo, da je pokritost IZ pri navadni linearni regresiji boljša kot pri linearnih modelih. Razlika je očitna predvsem pri manjših vzorcih, pri dovolj velikih pa praktično ni razlik (številke so razvidne v tabeli 17).
+Na Sliki 21 vidimo, da je pokritost IZ pri linearni regresiji boljša kot pri linearnih modelih. Razlika je očitna predvsem pri manjših vzorcih, pri dovolj velikih pa praktično ni razlik (številke so razvidne v tabeli 17).
 Širina intervalov zaupanja je pri obeh metodah precej podobna, vendar se linearna regresija vseeno izkaže za malenkost boljšo. Razlike se povečujejo predvsem z večanjem korelacije med pojasnjevalnimi spremenljivkami in z večanjem vzorca (kar je bolje vidno v tabeli 18).
-Predvidevamo, da je večanje širine intervalov zaupanja s večanjem stopnje asimetrije ostankov povezano s tem, da variance tokrat nismo skalirali.
+Predvidevamo, da je večanje širine intervalov zaupanja z večanjem stopnje asimetrije ostankov povezano s tem, da variance tokrat nismo skalirali.
 Vseeno pa lahko rečemo, da se \emph{lm} model v primeru logaritemske transformacije pri $Gamma(2,5)$ porazdelitvi pojasnjevalnih spremenljivk obnese bolje od \emph{glm} modela tako pri pokritosti kot tudi širini IZ.
 
 ```{r}
@@ -774,7 +774,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols','glm'), variable == 'sirina_B1',
 ```
 
 Pri $Gamma(5,5)$ porazdelitvi pojasnjevalnih spremenljivk pridemo do podobnih zaključkov kot pri $Gamma(2,5)$. Pokritost pri \emph{lm} je boljša od pokritosti pri \emph{glm} metodi, razlike so večje pri manjših vzorcih. Stopnja asimetrije ostankov tu ne igra vloge, prav tako korelacija med pojasnjevalnimi spremenljivkami.
-Slika 24 je zelo podobna Sliki 22, le da je skala širine IZ pomaknjena nekoliko višje. Predvsem pri manjših vzorcih je širina IZ v primeru porazdelitve $Gamma(2,5)$ v povprečju očitno večja od širine v primeru $Gamma(5,5)$. To opazimo, ko primerjamo tabeli 18 in 20.
+Slika 24 je zelo podobna Sliki 22, le da je skala širine IZ pomaknjena nekoliko nižje. Predvsem pri manjših vzorcih je širina IZ v primeru porazdelitve $Gamma(2,5)$ v povprečju očitno večja od širine v primeru $Gamma(5,5)$. To opazimo, ko primerjamo tabeli 18 in 20.
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -806,7 +806,7 @@ model3 <- aov(pokritost_B1 ~ model * n * korelacija * alpha, data = simulacija_l
 plot(eta_squared(model3))
 ```
 
-Iz Slike 25 lahko razberemo, da nobena od spremenljivk ne pojasni večjega deleža variabilnosti pokritosti intervalov zaupanja. Vpliv modela, velikosti vzorca in interakcije med modelom in velikostjo vzorca imajo sicer statistično značilen vpliv (razvidno iz priloge), venar niti vse spremenljivke skupaj pojasnijo manj kot $1\%$ variabilnosti.
+Iz Slike 25 lahko razberemo, da nobena od spremenljivk ne pojasni večjega deleža variabilnosti pokritosti intervalov zaupanja. Vpliv modela, velikosti vzorca in interakcije med modelom in velikostjo vzorca imajo sicer statistično značilen vpliv (razvidno iz priloge), vendar vse spremenljivke skupaj pojasnijo manj kot $1\%$ variabilnosti.
 Z danimi spremenljivkami pa lahko pojasnimo precej večji delež variabilnosti širine intervalov zaupanja, kar je razvidno na naslednji sliki.
 
 ```{r results=FALSE, fig.width=8, fig.cap="Velikost učinka pri analizi variance za širino intervala zaupanja"}
@@ -819,26 +819,38 @@ Velikost vzorca pojasni $18\%$ variabilnosti, korelacija dodatno $7\%$ in zatem 
 
 # Ugotovitve
 
-\textcolor{red}{Vse za prilagodit novim grafom in dopolnit.}
+Največji vpliv na ocene regresijskih koeficientov imata korelacija med pojasnjevalnimi spremenljivkami in velikost vzorca. 
+Z večanjem korelacije se večajo širine intervalov zaupanja, kar je pričakovano, saj lahko del vpliva ene spremenljivke prevzame druga spremenljivka.
+Z večanjem velikosti vzorca pri polnih modelih dobimo večjo pokritost pri \emph{glm} modelu in ožje intervale zaupanja pri obeh modelih (\emph{glm} in \emph{lm}).
+Pri dovolj velikih vzorcih (tu izvzamemo $n=10$) ima \emph{glm} nekoliko boljšo pokritost, a širše intervale zaupanja, kot \emph{lm} model.
+Pri najmanjšem opazovanem vzorcu ($n=10$) se pristop z \emph{lm} funkcijo izkaže za bolj učinkovitega pri pokritosti a slabšega pri širini intervalov zaupanja.
 
-Ugotovili smo, da asimetrija pojasnjevalnih spremenljivk nima pomembnega vpliva na pokritost in širino intervalov zaupanja regresijskih koeficientov.
-Prav tako smo ugotovili, da med metodama \emph{glm} in \emph{lm} ni posebnih razlik pri ocenah regresijskih koeficientov. Ker naju je ta ugotovitev presenetila, sva poskusili najti podoben problem v kakšni drugi literaturi in naleteli na delo P. E. Johnsona, ki je prišel do podobnih ugotovitev. Sklenil je, da gama porazdelitev ostankov le redkokdaj vpliva na ocene regresijskih koeficientov, kljub temu, da so kršene nekatere predpostavke.
+Pri večji asimetriji porazdelitve pojasnjevalnih spremenljivk dobimo nekoliko širše intervale zaupanja kot pri bolj simetrični porazdelitvi. Pri bolj simetrični porazdelitvi $Gamma(5,5)$ so tudi razlike med pristopoma z \emph{glm} in \emph{lm} manjše.Ob vsakem primeru pa velja, da se (procentualna) razlika v širini z večanjem velikosti vzorca povečuje v prid modela \emph{glm}.
 
-Večja korelacija med pojasnjevalnimi spremenljivkami poveča širino intervalov zaupanja regresijskih koeficientov, na pokritosti pa nima večjega vpliva.
+Večja korelacija med pojasnjevalnimi spremenljivkami poveča širino intervalov zaupanja regresijskih koeficientov, na pokritosti pa nima večjega vpliva. Izjema so modeli brez spremenljivke $X_2$.
+Asimetrija porazdelitve ostankov na ocene regresijskih koeficientov nima posebnega vpliva. V primeru logaritemske transformacije smo opazili, da se širina IZ z večanjem $\alpha$ (v $Gamma(\alpha, 5)$ porazdelitvi ostankov) povečuje, vendar pa to lahko pripišemo le vplivu večje variance in ne asimetrije.
+Z večanjem velikosti vzorca se pričakovano ožajo intervali zaupanja regresijskih koeficientov. Na pokritost IZ velikost vzorca nima vpliva, razen v primeru modelov brez spremenljivke $X_2$.
 
-Asimetrija porazdelitve ostankov na pokritost IZ regresijskih koeficientov nima posebnega vpliva, v kombinaciji z večjo korelacijo med pojasnjevalnimi spremenljivkami pa vpliva na širino IZ regresijskih koeficientov.
+Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliva na pokritost regresijskih koeficientov, saj smo podatke generirali pod predpostavko $\beta_3=0$. Vseeno pa v modelu brez $X_3$ dobimo nekoliko ožje intervale zaupanja, zaradi česar lahko tak model ocenimo kot najboljši (pravi). Rezultati so pričakovani, saj v modelih, kjer imamo vključene vse spremenljivke in neničelno korelacijo med pojasnjevalnimi spremenljivkami, del vpliva spremenljivke $X_2$ lahko prevzame spremenljivka $X_3$, zaradi česar prihaja do slabših rezultatov.
+Izločitev spremenljivke $X_2$ predvsem pri večjih vzorcih in neničelni korelaciji med pojasnjevalnimi spremenljivkami vpliva na slabšo pokritost IZ regresijskega koeficienta $\beta_1$. V primeru ničelne korelacije in zadostne velikosti vzorca izločitev katerekoli od spremenljivk ($X_2$ ali $X_3$) iz modela ne vpliva na pokritost IZ regresijskega koeficienta $\beta_1$.
 
-Z večanjem velikosti vzorca se pričakovano ožajo intervali zaupanja regresijskih koeficientov. Na pokritost IZ velikost vzorca nima vpliva.
+Nobena od spremenljivk, ki smo jih uporabili v tej nalogi, ne pojasni velikega deleža variabilnosti pokritosti intervalov zaupanja. Vseeno pa je nekaj takih, ki pojasnijo manjši delež variabilnosti in imajo statistično značilen vpliv. To so velikost vzorca, model (predvsem izključevanje spremenljivk), korelacija in različne interakcije.
+Z manjšim številom spremenljivk pa lahko pojasnimo večji delež variabilnosti širine intervalov zaupanja. Kar $55\%$ variabilnosti pojasni velikost vzorca, večji delež preostale variabilnosti pa lahko pojasnimo s korelacijo in interakcijo med velikostjo vzorca in korelacijo.
 
-Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliva na ocene regresijskih koeficientov, saj smo podatke generirali pod predpostavko $\beta_3=0$. Izločitev spremenljivke $X_2$ pri večjih vzorcih vpliva na slabšo pokritost IZ regresijskega koeficienta $\beta_1$.
+Pri modelih z logaritemsko transformacijo se je pristop s funkcijo \emph{lm} izkazal za boljšega tako pri pokritosti kot širini intervalov zaupanja. Na tem področju bi bilo zanimivo preveriti še, kako se obnese \emph{glm} funkcija v primeru enake formule kot v \emph{lm} in zapisom $link="identity"$ (torej $log(Y)$ namesto $link="log"$). Poleg tega bi bilo še smiselno preveriti, če bi se $link$ funkcija morda bolje obnesla, če bi pri generiranju podatkov transformirali le ostanke, ne pa tudi pojasnjevalnih spremenljivk.
+
+V modelih z logaritemsko transformacijo nobena od obravnavanih spremenljivk ne pojasni omembe vrednega deleža variabilnosti pokritosti IZ. Z določenimi spremenljivkami pa lahko pojasnimo večji delež variabilnosti širine IZ -  te spremenljivke so velikost vzorca, korelacija, porazdelitev ostankov (varianca ostankov) in nekatere interakcije.
+Omeniti je še smiselno, da smo pri manj asimetrični porazdelitvi pojasnjevalnih spremenljivk $Gamma(5,5)$ dobili ožje intervale zaupanja regresijskih koeficientov.
+
+Če pogledamo vse ugotovitve skupaj, lahko sklenemo, da če nimamo opravka s transformacijami, če imamo dovolj velik vzorec in če imamo gama porazdelitev ostankov, ima \emph{glm} model boljšo pokritost intervalov zaupanja, a na račun širših intervalov zaupanja. V primeru transformacije odzivne spremenljivke je bolj smiselno izbrati pristop, kjer že v vpisani formuli transformiramo odzivno spremenljivko, namesto da le to upoštevamo v $link$ parametru funkcije \emph{glm}. Seveda pa v praksi dobimo podatke, pri katerih sprva ne vemo, s kakšnimi transformacijami imamo opravka. V splošnem lahko rečemo, da je pristop z \emph{lm} modelom povsem "konkurenčen" pristopu z \emph{glm}, razlike v ocenah regresijskih koeficientov so relativno majhne. Delo P. E. Johnsona, ki je prišel do nekaterih podobnih ugotovitev, potrjuje naše sklepe. Sam je sklenil, da gama porazdelitev ostankov le redkokdaj vpliva na ocene regresijskih koeficientov, kljub temu, da so kršene nekatere predpostavke.
 
 # Viri
 
 - P. E. Johnson, \emph{GLM with a Gamma-distributed Dependent Variable}, [ogled 05.01.2020], dostopno na \url{https://pj.freefaculty.org/guides/stat/Regression-GLM/Gamma/GammaGLM-01.pdf?fbclid=IwAR14W34VhGzyG0wPiqNTk1hWjIToAug6a2TsPsTeZKLj_ntfTxaR1Aowiko}
 
-- V. Maver, \emph{Normalni linearni mešani modeli}, diplomsko delo, Fakulteta za matematiko in fiziko, Univerza v Ljubljani, 2018.
-
 - J. Jiang, \emph{Linear and Generalized Linear Mixed Models and Their Applications}, Springer Series in Statistics, Springer Science + Business Media, LLC, New York, 2007.
+
+- V. Maver, \emph{Normalni linearni mešani modeli}, diplomsko delo, Fakulteta za matematiko in fiziko, Univerza v Ljubljani, 2018.
 
 - \emph{glm}, v: RDocumentation, [ogled 30.12.2020], dostopno na \url{https://www.rdocumentation.org/packages/stats/versions/3.6.0/topics/glm}.
 
@@ -855,7 +867,7 @@ Izločitev spremenljivke $X_3$ iz modela po pričakovanjih nima bistvenega vpliv
 
 - \emph{mvgamma}, v: rdrr.io, [ogled 18.01.2021], dostopno na \url{https://rdrr.io/rforge/lcmix/man/mvgamma.html}
 
-- K. Siegrist, \emph{5.8. The Gama Distribution}, [ogled 20.01.2020], dostopno na \url{https://stats.libretexts.org/Bookshelves/Probability_Theory/Book%3A_Probability_Mathematical_Statistics_and_Stochastic_Processes_(Siegrist)/05%3A_Special_Distributions/5.08%3A_The_Gamma_Distribution}
+- K. Siegrist, \emph{5.8. The Gama Distribution}, [ogled 20.01.2021], dostopno na \url{https://stats.libretexts.org/Bookshelves/Probability_Theory/Book%3A_Probability_Mathematical_Statistics_and_Stochastic_Processes_(Siegrist)/05%3A_Special_Distributions/5.08%3A_The_Gamma_Distribution}
 
 # Priloge
 
