@@ -1,0 +1,125 @@
+---
+title: "Linearna regresija"
+author: "Vesna Zupanc"
+date: "23 1 2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Teoretični del
+
+Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. V tem poglavjubomo predstavili, kaj so linearni in posplošeni linearni modeli in metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente modela. 
+
+## Splošni in posplošeni linearni modeli
+
+Splošen linearni model 
+
+$$Y=X\beta + \epsilon$$,
+
+je model, kjer je odvisno spremenljivko $Y$ izrazimo z linearno fukncijo neodvisnih spremenljivk in napak. Izraz splošen se nanaša na odvisnost na eno ali več neodvisnih spremenljivk. Linearnost pa se nanaša na to, da je model linearen v parametrih ($\beta$). Predpostavljamo, da so napake neodvisne in enako porazdeljene, za njih pa velja $E[\epsilon_i] = 0$ in $Var[\epsilon_i]=\sigma^2$. Običajno predpostavimo tudi normalno porazdelitev napak, torej $\epsilon_i~N(0,\sigma^2)$, s čimer dobimo normalen linearen model.  
+
+Pri splošnih linearnih modelih pa imamo kar nekaj omejitev oz. primerov, ko le-te niso primerna izbira. Takšen primer je na primer, kadar je varianca odvisne spremenljivke $Y$ odvisna od povprečja. Takrat lahko izberemo posplošene linearne modele. 
+
+Posplošeni linearni model je sestavljen iz linearnega prediktorja:
+
+$$\eta = X\beta$$
+
+in dveh funkcij:
+
+- link funkcija: opisuje kako je povprečje $E[Y_i] = \mu_i$ odvisno od linearnega prediktorja: $$g(\mu_i) = \eta_i$$
+- funkcije varance: opisuje kako je varianca $Var[Y_i]$ odvisna od povprečja: $$Var[Y_i] = \theta V(\mu)$$,
+kjer je $\theta$ disperzijski parameter (konstanta). 
+
+V primeru splošnega linearnega modela velja $g(\mu_i) = \mu_i$ in $V[\mu_i]=1$. 
+
+
+## Linearna regresija
+
+Linearna regresija je statistični model, ki ga v najbolj enostavni obliki lahko zapišemo kot:
+$$Y_{i} = \beta_{0} + \beta_{1} x_{i} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ med seboj neodvisne slučajne spremenljivke, $x_{i}$ pa dane vrednosti.
+Velja $\epsilon_{i} \sim N(0, \sigma^{2})$ za vsak $i$ in tako $Y_{i} \sim N(\beta_{0} + \beta_{1}x_{i},\ \sigma^{2})$. Model lahko razširimo na več linearnih parametrov: $$Y_{i} = \beta_{0} + \beta_{1} x_{i1} + \dots +\beta_{p} x_{ip} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ neodvisne enako porazdeljene slučajne spremenljivke, za $1\leq i\leq n$.
+
+Lahko ga zapišemo tudi v matrični obliki: $$Y = X \beta + \epsilon.$$
+
+Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Z naraščanjem multikolinearnosti narašča tudi varianca ocen regresijskih koeficientov, kar pa vpliva tudi na značilnost samih koeficientov, ki so zato pogosto neznačilni. Ne vpliva pa na vrednost $R^2$, torej prvi indikator multikolinearnosti je visoka vrednost $R^2$ pri statistični neznačilnosti večine ocenjenih regresijskih koeficientov. Še pred izdelavo modela pa lahko pogledamo korelacijske koeficiente med pojasnjevalnimi spremenljivkami, ki ne smejo biti močno povezane. Močno povezane spremenljivke kot je že omenjeno, povzročajo multikolinearnost. Multikolinearnost pa lahko odkrivamo tudi z uporabo ANOVE, izračunom variančnega inflacijskega faktorja in še z drugimi pristopi. 
+
+Opazovanja so med seboj neodvisna. V primeru kršenja te predpostavke je smiselno uporabiti posplošene linearne modele, običajno longitudinalni (vzdolžni) model.
+Vse predpostavke linearnega regresijskega modela so navedene v naslednjem razdelku.
+
+## Linearni modeli
+
+Cilj linearne regresije je oceniti vpliv neodvisnih spremenljivk na odvisno spremenljivko. Poseben primer regresije so linearni modeli. 
+
+### Normalni linearni model
+
+Normalni linearen model zapišemo kot
+
+$$y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \cdots + \beta_{p-1}x_{i,p-1} + \epsilon_i,$$
+
+kjer velja $\epsilon_i\sim N(0,\sigma^2)$.
+
+Normalni linearni model rešujem z metodo najmanjših kvadratov. Ideja metode je minimizirati vsoto napak:
+
+$$SSE(\beta) = \sum_{i=1}^n(y_i-x_i^T\beta)^2$$,
+
+ali pa z metodo največjega verjetja, kjer maksimiziramo log-verjetnostno funkcijo:
+
+$$\ell(\beta|y) = \sum_{i=1}^n\left(log\frac{1}{2\pi\sigma^2}-\frac{1}{2\sigma^2}(y_i-x_i^T\beta)^2\right)$$.
+
+Rešitev po obeh metodah je enaka, in sicer: $\hat{\beta} = (X^TX)^{-1}X^Ty$. 
+
+V našem primeru bomo za ocenjevanja parametrov pri linearni regresiji uporabljali funkcijo `lm`, ki v splošnem uporablja metodo najmanjših kvadratov (OLS). Normalni linearni model ima zaradi potrebnih predpostavk, kar nekaj omejitev. Kadar ni izpolnjena predpostavka o normalni porazdelitvi ostankov in odvisne spremenljivke, si lahko pomagamo z raznimi transformacijami, s katerimi preoblikujemo odvisno spremenljivko tako, da s transformacijo dobimo normalno porazdelitev $g(y_i)\sim N(x_i^T\beta,\sigma^2)$, ali pa si pomagamo s posplošenimi linearnimi modeli.
+
+### Posplošeni linearni modeli
+
+Pri posplošenih linearnih modelih za razliko od normalnega modela ne potrebujemo izpolnjenih predpostavk o normalnosti in homoskedastičnosti. Dovoljene so porazdelitve odvisne spremenljivke iz različnih družin. Regresijski koeficienti so ocenjeni po metodi največjega verjetja. Modeli so sestavljeni iz več komponent. Pri modeliranju s posplošenimi linearnimi modeli moramo najprej izbrati porazdelitveno družino. V naši seminarski nalogi, si bomo pogledali enoparametrične verjetnostne porazdelitve, ki pripadajo eksponentni družini, saj bomo le-te tudi uporabili v nadaljevanju. 
+
+Komponente posplošenih linearnih modelov so tako:
+
+- Slučajna komponenta: $y_i$, $i=1,\dots,n$, so neodvisne spremenljivke z gostoto iz eksponentne družine: $$f(y|\theta,\phi)=exp\left\{\frac{y \theta - b(\theta)}{\phi}+c(y,\phi)\right\},$$ kjer je $\phi>0$ disperzijski parameter in $b(.)$, $c(.)$ znani funkciji, $\theta$ pa je naravni (kanonični) parameter. 
+
+- Sistematična komponenta: $\eta_i=\eta_i(\beta) = x_i^T\beta$ je linearni prediktor, kjer je $\beta$ vektor neznanih regresijskih parametrov. 
+
+- Parametrične link komponente: Link fukncija opisuje kako je povprečje $E[Y_i] = \mu_i$ odvisno od linearnega prediktorja: $$g(\mu_i) = \eta_i$$ oz. naravna (kanonična) link funcija, če velja $\theta=\eta$. 
+
+Za reševanje problema se uporablja metoda največjega verjetja, kjer zapišemo log-verjetje:
+
+$$\ell(\mu|y) = \sum_{i=1}^n\left(\frac{y_i \theta_i - b(\theta_i)}{\phi}+c(y_i,\phi)\right)$$
+Cenilko $\hat{\mu}$ pridobimo z reševanjem t.i. "score" funkcije:
+
+$$s(\mu) = \frac{\partial}{\partial\mu}\ell(\mu|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu} = \left(\frac{y_1-\mu_1}{\phi V(\mu_1)}, \dots , \frac{y_n-\mu_n}{\phi V(\mu_n)}\right)$$.
+
+Ker velja $\mu = \mu(\beta)$, je score funkcija za parameter $\beta$ enaka:
+
+$$s(\beta) = \frac{\partial}{\partial\beta}\ell(\beta|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu}\frac{\partial\mu}{\partial\eta}\frac{\partial\eta}{\partial\beta} = \sum_{i=1}^n\frac{y_i-\mu_i}{\phi V(\mu_i)}\frac{1}{g'(\mu_i)}x_i$$.
+
+Pogoj, ki ga dobimo je:
+
+$$\sum_{i=1}^n\frac{y_i-\hat{\mu_i}}{V(\hat{\mu_i})}\frac{1}{g'(\hat{\mu_i})}x_i=0$$,
+
+ki je neodvisen od disperzijskega parametra in velja $g(\hat{\mu_i}) = x^T\hat{\beta}$. 
+
+Splošna metoda za rešitev enačbe je iterativni algoritem Fisherjeva metoda točkovanja (ang. Fisher’s Method of Scoring). V metodi je v k-ti iteraciji nova ocena $\beta^{(k+1)}$ pridobljena iz prejšne ocene z:
+
+$$\beta{(k+1)} = \beta^{(k)} + s(\beta^{(k)})\left[E\left[\frac{\partial s(\beta)}{\partial \beta}\right]\Biggr|_{\beta=\beta^{(k)}}\right]^{-1}.$$
+
+Pokazati se da, da je lahko ta iteracija preoblikovana v:
+
+$$\beta^{(k+1)} = (X^TW^{(k)}X)^{-1}X^TW^{(k)}z^{(k)}$$,
+
+kjer sta vektor $z$ in matrika uteži $W$ definirana kot:
+
+\begin(align*)
+z_i &= g(\mu_i) + g'(\mu_i)(y_i - \mu_i)
+w_i &= \frac{1}{V(\mu_i)(g'(\mu_i))^2}
+\end(align*)
+
+Tako oceno $\hat{\beta}$ izračunamo iterativno z uteženimi najmanjšimi kvadrati (IWLS) z naslednjimi koraki:
+
+1. določimo začetne vrednosti $\mu_i^{(0)}$
+2. izračunamo $z_i^{(k)}$ in uteži $w_i^{(k)}$
+3. izračunamo $\beta^{(k+1)}$ z uteženimi najmanjšimi kvadrati
+4. ponavljamo koraka $2$ in $3$, dokler ne dosežemo konvergence
