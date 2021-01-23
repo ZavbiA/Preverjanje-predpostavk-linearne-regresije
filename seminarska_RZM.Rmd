@@ -568,7 +568,7 @@ ggplot(data_sirina %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable ==
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Rezultati so na videz podobni tistim z bolj asimetrično porazdelitvijo pojasnjevalnih spremenljivk. Vplivi ostalih parametrov, ki jih spreminjamo, ostajajo enaki, smo pa z večjo asimetrijo porazdelitve pojasnjevalnih spremenljivk dobili ožje intervale zaupanja in malenkost slabšo pokritost (razlika je približno $1$ o.t. in je vidna, če primerjamo številske tabele).
+Rezultati so na videz podobni tistim z bolj asimetrično porazdelitvijo pojasnjevalnih spremenljivk. Vplivi ostalih parametrov, ki jih spreminjamo, ostajajo enaki, smo pa z večjo asimetrijo porazdelitve pojasnjevalnih spremenljivk dobili ožje intervale zaupanja in malenkost slabšo pokritost (razlika je približno $1$ o.t. in je vidna, če primerjamo številske tabele). Razlike lahko pripišemo asimetriji in različnima variancama porazdelitev pojasnjevalnih spremenljivk.
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -602,7 +602,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x2','glm_x2'), variable == 'sirin
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Pri pokritosti v modelih brez $X_2$ opazimo večje razlike v primerjavi z bolj asimetrično porazdelitvijo pojasnjevalnih spremenljivk. Tokrat imamo predvsem pri večjih vzorcih pokritost precej slabšo kot prej (primerjava tabel 7 in 13), vendar pa to lahko pripišemo predvsem ožjim intervalom zaupanja (primerjava tabel 8 in 14).
+Pri pokritosti v modelih brez $X_2$ opazimo večje razlike v primerjavi z bolj asimetrično porazdelitvijo pojasnjevalnih spremenljivk. Tokrat imamo predvsem pri večjih vzorcih pokritost precej slabšo kot prej (primerjava tabel 7 in 13), vendar pa to lahko pripišemo predvsem ožjim intervalom zaupanja (primerjava tabel 8 in 14). Drug možen vzrok je različna variabilnost pojasnjevalnih spremenljivk, saj variance pojasnjevalnih spremenljivk nismo skalirali.
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x2','glm_x2'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -638,7 +638,7 @@ ggplot(data_sirina %>% filter(model %in%c('ols_x3','glm_x3'), variable == 'sirin
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Pri modelih brez spremenljivke $X_3$ v primeru bolj simetrične porazdelitve $Gamma(5,5)$ opazimo
+Pri modelih brez spremenljivke $X_3$ v primeru bolj simetrične porazdelitve $Gamma(5,5)$ opazimo ožje intervale zaupanja kot pri $Gamma(2,5)$, pokritost ostaja zelo podobna (v nekaterih primerih je boljša, v drugih slabša za največ 1 o.t.).
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x3','glm_x3'), variable == 'pokritost_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
