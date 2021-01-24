@@ -49,75 +49,39 @@ Poleg tega bomo preverjali, če probleme kršenja predpostavk lahko (vsaj delno)
 
 # Teoretični del
 
-Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. V tem poglavju so najprej bolj splošno predstavljeni posplošeni linearni modeli, nato pa podrobneje model linearne regresije in metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente.
-
-## Posplošeni linearni modeli
-
-Posplošeni linearni mešani model izrazimo kot $$Y=X\beta+Z\alpha+\epsilon,$$ kjer je $Y$ opazovani slučajni vektor, $X$ matrika znanih vrednosti pojasnjevalnih spremenljivk, $\beta$ neznan vektor regresijskih koeficientov (fiksni učinki), $Z$ znana matrika, $\alpha$ vektor naključnih učinkov in $\epsilon$ vektor napak. $\alpha$ in $\epsilon$ sta neopazovana. Predpostavimo, da sta nekorelirana.
-
-V matrični obliki model izgleda takole: $$
-\begin{bmatrix}
-Y_{1} \\
-Y_{2} \\
-\vdots \\
-Y_{n}
-\end{bmatrix}
-=
-\begin{bmatrix}
-X_{1,1} & X_{1,2} & \dots & X_{1,p} \\
-X_{2,1} & X_{2,2} & \dots & X_{2,p} \\
-\vdots & \vdots &  & \vdots \\
-X_{n,1} & 0 & \dots & X_{n,p}
-\end{bmatrix}
-\begin{bmatrix}
-\beta_{1} \\
-\beta_{2} \\
-\vdots \\
-\beta_{p}
-\end{bmatrix}
-+
-\begin{bmatrix}
-Z_{1,1} & Z_{1,2} & \dots & Z_{1,q} \\
-Z_{2,1} & Z_{2,2} & \dots & Z_{2,q} \\
-\vdots & \vdots &  & \vdots \\
-Z_{n,1} & Z_{n,2} & \dots & Z_{n,q}
-\end{bmatrix}
-\begin{bmatrix}
-\alpha_{1} \\
-\alpha_{2} \\
-\vdots \\
-\alpha_{q}
-\end{bmatrix}
-+
-\begin{bmatrix}
-\epsilon_{1} \\
-\epsilon_{2} \\
-\vdots \\
-\epsilon_{n}
-\end{bmatrix}
-.$$
-
-Linearni mešani modeli se delijo na Gaussove ali normalne in ne-Gaussove.
-Pomembna predpostavka pri normalnih linearnih mešanih modelih je normalna porazdeljenost vektorja slučajnih učinkov $\alpha \sim N(0,\sigma^2 I_q)$ in vektorja slučajnih odstopanj $\epsilon \sim N(0,\tau^2 I_n)$, ki nista nujno enakih razsežnosti. Druga pomembna predpostavka je neodvisnost slučajnih vektorjev $\alpha$ in $\epsilon$. Prednost uporabe nenormalnih linearnih mešanih modelov pred normalnimi je v tem, da so bolj fleksibilni za modeliranje
-(Maver, 2018, str. 6).
+Naloga je osredotočena na linearno regresijo, ki spada pod posplošene linearne modele. V tem poglavju bomo predstavili, kaj so linearni in posplošeni linearni modeli ter metode, s pomočjo katerih lahko ocenjujemo regresijske koeficiente modela. 
 
 ## Linearna regresija
 
 Linearna regresija je statistični model, ki ga v najbolj enostavni obliki lahko zapišemo kot:
 $$Y_{i} = \beta_{0} + \beta_{1} x_{i} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ med seboj neodvisne slučajne spremenljivke, $x_{i}$ pa dane vrednosti.
-Velja $\epsilon_{i} \sim N(0, \sigma^{2})$ za vsak $i$ in tako $Y_{i} \sim N(\beta_{0} + \beta_{1}x_{i},\ \sigma^{2})$. Model lahko razširimo na več linearnih parametrov: $$Y_{i} = \beta_{0} + \beta_{1} x_{i1} + \dots +\beta_{p} x_{ip} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ neodvisne enako porazdeljene slučajne spremenljivke, za $1\leq i\leq n$.
+Velja $\epsilon_{i} \sim N(0, \sigma^{2})$ za vsak $i$ in tako $Y_{i} \sim N(\beta_{0} + \beta_{1}x_{i},\ \sigma^{2})$. Model lahko razširimo na več linearnih parametrov: $$Y_{i} = \beta_{0} + \beta_{1} x_{i1} + \dots +\beta_{p} x_{ip} + \epsilon_{i},$$ kjer so $\epsilon_{i}$ neodvisne enako porazdeljene slučajne spremenljivke in $1\leq i\leq n$ (Pfajfar, 2018).
 
 Lahko ga zapišemo tudi v matrični obliki: $$Y = X \beta + \epsilon.$$
 
-Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Na multikolinearnost posumimo, če se v modelu determinacijski koeficient izkaže za statistično značilnega, od regresijskih koeficientov pa nobeden.
+Med temeljne predpostavke regresijskega modela spada predpostavka, da med neodvisnimi spremenljivkami ni popolne kolinearnosti ali multikolinearnosti. Najbolj tipičen vzrok za kršenje te predpostavke je, da smo v model kot neodvisni vključili dve spremenljivki, med katerima obstaja močna linearna povezanost. Do multikolinearnosti pride tudi, če v model vključimo več spremenljivk kot je velikost vzorca. Z naraščanjem multikolinearnosti narašča tudi varianca ocen regresijskih koeficientov, kar pa vpliva tudi na značilnost samih koeficientov, ki so zato pogosto neznačilni. Ne vpliva pa na vrednost $R^2$. Prvi indikator multikolinearnosti je torej visoka vrednost $R^2$ pri statistični neznačilnosti večine ocenjenih regresijskih koeficientov (Pfajfar, 2018).
+Še pred izdelavo modela pa lahko pogledamo korelacijske koeficiente med pojasnjevalnimi spremenljivkami, ki ne smejo biti močno povezane. Kot je bilo že omenjeno, močno povezane spremenljivke povzročajo multikolinearnost. Lahko pa jo odkrivamo tudi z uporabo ANOVE, izračunom variančnega inflacijskega faktorja in še z drugimi pristopi (Bhandari, 2020). 
 
 Opazovanja so med seboj neodvisna. V primeru kršenja te predpostavke je smiselno uporabiti posplošene linearne modele, običajno longitudinalni (vzdolžni) model.
 Vse predpostavke linearnega regresijskega modela so navedene v naslednjem razdelku.
 
-## Metoda najmanjših kvadratov (MNK)
-Pri 16 letih jo je odkril nemški matematik Carl F. Gauss. Zaradi svojih lastnosti je najbolj razširjena metoda ocenjevanja regresijskih koeficientov
-(Pfajfar, 2018, str.53).
+## Linearni modeli
 
+Cilj linearne regresije je oceniti vpliv neodvisnih spremenljivk na odvisno spremenljivko. Ker spada pod posplošene linearne modele, si poglejmo še nekaj teorije o linearih modelih.
+
+### Normalni linearni model
+
+Normalni linearni model zapišemo kot
+
+$$y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \cdots + \beta_{p-1}x_{i,p-1} + \epsilon_i,$$
+
+kjer velja $\epsilon_i\sim N(0,\sigma^2)$.
+
+Parametre v normalnem linearnem modelu lahko ocenjujemo z metodo najmanjših kvadratov ali pa z metodo največjega verjetja, kjer maksimiziramo log-verjetnostno funkcijo.
+V našem primeru bomo za ocenjevanje parametrov pri linearni regresiji uporabljali funkcijo `lm`, ki v splošnem uporablja osnovno metodo najmanjših kvadratov (MNK ali angleško OLS), zato v je v nadaljevanju podrobneje predstavljena samo ta metoda.
+
+Metodo najmanjših kvadratov je pri 16 letih odkril nemški matematik Carl F. Gauss. Zaradi svojih lastnosti je najbolj razširjena metoda ocenjevanja regresijskih koeficientov 
+(Pfajfar, 2018, str.53).
 Pri MNK na primeru osnovnega regresijskega modela velikosti $p=1$ iščemo $\beta_{0}$ in $\beta{1}$ tako, da bo vsota kvadratov ostankov najmanjša možna. Pri danih $(x_{i}, y_{i})$ torej iščemo $$\min_{\beta_{0}, \beta_{1}} \sum_{i=1}^{n} (y_{i} - \beta_{0} - \beta_{1}x_{i})^{2}.$$
 
 Za razumevanje oznak v predpostavkah metode ločimo dva modela, in sicer linearni vzorčni regresijski model $y_i=b_1+b_2x_i+e_i$ in linearni populacijski regresijski model $y=\beta_1+\beta_2x_i+u_i$.
@@ -144,47 +108,66 @@ Pfajfar (2018) navaja naslednje predpostavke metode najmanjših kvadratov:
 - slučajna spremenljivka $u$ je normalno porazdeljena: $u_i \sim N(0,\sigma_u^2)$.
 Posledično je pogojna porazdelitev odvisne spremenljivke $y$ tudi normalna in sicer $N(\beta_1x_{1i}+...+\beta_kx_{ki},\sigma_u^2)$
 
-## Metoda iterativnega uteženega povprečja najmanjših kvadratov (IWLS)
+Normalni linearni model ima zaradi potrebnih predpostavk kar nekaj omejitev. Kadar ni izpolnjena predpostavka o normalni porazdelitvi ostankov in odvisne spremenljivke, si lahko pomagamo z raznimi transformacijami, s katerimi preoblikujemo odvisno spremenljivko tako, da s transformacijo dobimo normalno porazdelitev $g(y_i)\sim N(x_i^T\beta,\sigma^2)$, ali pa si pomagamo s posplošenimi linearnimi modeli.
 
-Naj bo $Y$ vektor meritev in $X$ matrika znanih konstant. Naj bo $E(Y) = X\beta$, kjer $\beta$ kot do sedaj predstavlja vektor neznanih regresijskih koeficientov. Cenilko za $\beta$ se po uteženi metodi najmanjših kvadratov dobi z minimizacijo izraza 
-\begin{equation}
-(Y - X\beta)'W(Y - X\beta),
-\end{equation}
-kjer je $W$ znana simetrična matrika uteži.
+### Posplošeni linearni modeli
 
-Brez škode za splošnost naj bo rang matrike $X$ poln in naj velja rang$X=p$.
-Potem je za vsako nesingularno (simetrično) matriko $W$ minimum izraza (1) enak 
-\begin{equation}
-\hat{\beta}_W = (X'WX)^{-1}X'WY.
-\end{equation}
-Cenilko za $\beta$ po običajni metodi najmanjših kvadratov (ang. ordinary least squares, OLS) se dobi kot poseben primer, za $W=I$:
-\begin{equation}
-\hat{\beta}_I=(X'X)^{-1}X'Y .
-\end{equation}
+Pri posplošenih linearnih modelih za razliko od normalnega modela ne potrebujemo izpolnjenih predpostavk o normalnosti in homoskedastičnosti. Dovoljene so porazdelitve odvisne spremenljivke iz različnih družin. Regresijski koeficienti so običajno ocenjeni po metodi največjega verjetja. Modeli so sestavljeni iz več komponent. Pri modeliranju s posplošenimi linearnimi modeli moramo najprej izbrati porazdelitveno družino. V tej seminarski nalogi si bomo pogledali enoparametrične verjetnostne porazdelitve, ki pripadajo eksponentni družini, saj bomo le-te uporabili v nadaljevanju. 
 
-Izkaže se, da je v smislu čim manjše variance optimalna izbira za matriko $W$ matrika  $W = V^{-1},$ kjer je $V = Var(Y)$. Tako dobljena cenilka za parameter $\beta$ je najboljša, saj je z njeno uporabo dosežena najmanjša možna variabilnost med vsemi drugimi alternativami. V tem primeru se dobljeni cenilki za $\beta$ reče najboljša linearna nepristranska cenilka ali $BLUE$ (ang. best linear unbiased estimator):
-\begin{equation}
-\hat{\beta}_{BLUE} = (X'V^{-1}X)^{-1}X'V^{-1}Y.
-\end{equation}
+Komponente posplošenih linearnih modelov so tako:
 
-V enačbi za $\beta_{BLUE}$ nastopa tudi $V$, ki pa tipično ni znana. Zaradi poenostavitve je v nadaljevanju prikazan postopek izračuna cenilke $BLUE$ zgolj na uravnoteženem primeru.
-Naj bo $Y_{ij}, j = 1,..., \tilde{m}$, vektor meritev na $i-$tem posamezniku, kjer je $\tilde{m}$ fiksno število. V uravnoteženem primeru so na vseh posameznikih meritve pridobljene ob določenih časovnih trenutkih $t_1, . . . , t_{\tilde{m}}$ . Za $i-$tega posameznika se lahko vektor
-meritev zapiše kot $Y_i = (Y_{ij})_{\leq j\leq \tilde{m}}, i = 1,...,n$. Naj bodo $Y_1, . . . , Y_n$ med seboj neodvisni in naj za njih velja $E(Y_i) = X_i\beta$ in $Var(Y_i) = V_0$. Tu je $X_i$ matrika znanih konstant in $V_0 = (v_{qr})_{1\leq q, r\leq \tilde{m}}$ neznana variančno kovariančna matrika. Iz tega sledi, da je $V = diag(V_0, . . . , V_0)$. Ker je število meritev $\tilde{m}$ na vsakem posamezniku fiksno, je mogoče poiskati dosledno cenilko za $V$. Če bi bil parameter $\beta$ znan, bi bila dosledna cenilka za $V$ kar $$\hat{V} = diag(\hat{V}_0,...,\hat{V}_0),$$
-kjer je
-\begin{equation}
-\hat{V}_0 =\frac{1}{n}\sum^n_{i=1} (Y_i - X_i\beta)(Y_i - X_i\beta)'.
-\end{equation}
+- Slučajna komponenta: $y_i$, $i=1,\dots,n$, so neodvisne spremenljivke z gostoto iz eksponentne družine: $$f(y|\theta,\phi)=exp\left\{\frac{y \theta - b(\theta)}{\phi}+c(y,\phi)\right\},$$ kjer je $\phi>0$ disperzijski parameter in $b(.)$, $c(.)$ znani funkciji, $\theta$ pa je naravni (kanonični) parameter. 
+- Sistematična komponenta: $\eta_i=\eta_i(\beta) = x_i^T\beta$ je linearni prediktor, kjer je $\beta$ vektor neznanih regresijskih parametrov. 
 
-Če bi bila $V$ znana, bi lahko za izračun najboljše linearne nepristranske cenilke za $\beta$ uporabili (4), če pa bi poznali $\beta$, bi z (5) dobili dosledno cenilko za $V$.
+- Parametrične link komponente: Link fukncija opisuje kako je povprečje $E[Y_i] = \mu_i$ odvisno od linearnega prediktorja: $$g(\mu_i) = \eta_i$$ oz. naravna (kanonična) link funcija, če velja $\theta=\eta$. 
 
-Metodi, kjer ni treba poznati ne $\beta$, ne $V$, pa se reče iterativno uteženo povprečje najmanjših kvadratov (ang. iterative weighted least squares, IWLS). Postopek omenjene metode je sledeč:
+- Funkcija variance: opisuje kako je varianca $Var[Y_i]$ odvisna od povprečja $Var[Y_i] = \theta V(\mu)$
 
-* Najprej se izračuna cenilka za $\beta$ po običajni metodi najmanjših kvadratov s pomočjo (3).
-* Nato se izračuna $\hat{V}$ po (5), kjer je $\beta$ zamenjan z $\hat{\beta}_I$ izračunanim en korak prej.
-* V zadnjem koraku pa se na desni strani (4) matriko $V$ zamenja z njeno cenilko $\hat{V}$, izračunano na prejšnjem koraku.
+Za reševanje problema se uporablja metoda največjega verjetja, kjer zapišemo log-verjetje:
 
-Na tak način se dobi cenilka za $\beta$ po prvi iteraciji, nato pa se postopek ponavlja.
-Pod predpostavko normalnosti se izkaže, da če IWLS konvergira, bo cenilka v limiti enaka cenilki, dobljeni po metodi največjega verjetja (celotno podpoglavje je povzeto po Maver, 2018, strani 19-21).
+$$\ell(\mu|y) = \sum_{i=1}^n\left(\frac{y_i \theta_i - b(\theta_i)}{\phi}+c(y_i,\phi)\right)$$
+Cenilko $\hat{\mu}$ pridobimo z reševanjem t.i. "score" funkcije:
+
+$$s(\mu) = \frac{\partial}{\partial\mu}\ell(\mu|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu} = \left(\frac{y_1-\mu_1}{\phi V(\mu_1)}, \dots , \frac{y_n-\mu_n}{\phi V(\mu_n)}\right)$$.
+
+Ker velja $\mu = \mu(\beta)$, je score funkcija za parameter $\beta$ enaka:
+
+$$s(\beta) = \frac{\partial}{\partial\beta}\ell(\beta|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu}\frac{\partial\mu}{\partial\eta}\frac{\partial\eta}{\partial\beta} = \sum_{i=1}^n\frac{y_i-\mu_i}{\phi V(\mu_i)}\frac{1}{g'(\mu_i)}x_i$$.
+
+Pogoj, ki ga dobimo je:
+
+$$\sum_{i=1}^n\frac{y_i-\hat{\mu_i}}{V(\hat{\mu_i})}\frac{1}{g'(\hat{\mu_i})}x_i=0$$,
+
+ki je neodvisen od disperzijskega parametra in velja $g(\hat{\mu_i}) = x^T\hat{\beta}$. 
+
+Splošna metoda za rešitev enačbe je iterativni algoritem Fisherjeva metoda točkovanja (ang. Fisher’s Method of Scoring). V metodi je v k-ti iteraciji nova ocena $\beta^{(k+1)}$ pridobljena iz prejšne ocene z:
+
+$$\beta{(k+1)} = \beta^{(k)} + s(\beta^{(k)})\left[E\left[\frac{\partial s(\beta)}{\partial \beta}\right]\Biggr|_{\beta=\beta^{(k)}}\right]^{-1}.$$
+
+Pokazati se da, da je lahko ta iteracija preoblikovana v:
+
+$$\beta^{(k+1)} = (X^TW^{(k)}X)^{-1}X^TW^{(k)}z^{(k)}$$,
+
+kjer sta vektor $z$ in matrika uteži $W$ definirana kot:
+
+
+$$
+z_i = g(\mu_i) + g'(\mu_i)(y_i - \mu_i) 
+$$
+
+$$
+w_i = \frac{1}{V(\mu_i)(g'(\mu_i))^2}
+$$
+
+
+Tako oceno $\hat{\beta}$ izračunamo iterativno z uteženimi najmanjšimi kvadrati (IWLS) z naslednjimi koraki:
+
+1. določimo začetne vrednosti $\mu_i^{(0)}$
+2. izračunamo $z_i^{(k)}$ in uteži $w_i^{(k)}$
+3. izračunamo $\beta^{(k+1)}$ z uteženimi najmanjšimi kvadrati
+4. ponavljamo koraka $2$ in $3$, dokler ne dosežemo konvergence
+
+(Celotna metoda reševanja povzeta po Turner, 2008)
 
 
 # Generiranje podatkov
@@ -454,8 +437,9 @@ ggplot(data_sirina %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable ==
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Pri majhnem vzorcu ni velikih razlik pri pokritosti glede na model, je pa predvsem ob prisotnosti višje korelacije nekaj razlik v širini intervalov zapanja. Odstranitev spremenljivke $X_3$ nima večjega vpliva na pokritost, dobimo pa nekoliko ožje intervale zaupanja. Večji vpliv ima odstranitev spremenljivke $X_2$, ki ima dejanski vpliv na odvisno spremenljivko. V splošnem so intervali zaupanja v primeru izključene spremenljivke pri višji korelaciji ožji kot v polnem modelu, vendar pa ne smemo pozabiti, da je v primeru izključitve $X_2$ zato slabša pokritost.
-Kar je zanimivo, je, da se pokritost v primeru modela `glm_x2` močno poslabša, ko povečamo vzorec (vendar le v primeru neničelne korelacije).
+Pri majhnem vzorcu ni velikih razlik pri pokritosti glede na model, je pa predvsem ob prisotnosti višje korelacije nekaj razlik v širini intervalov zapanja. Z večanjem korelacije ima polni model širše intervale zaupanja, kar je posledica multikolinearnosti, zaradi katere imajo ocene regresijskih koeficientov večje standardne napake, v polnem modelu pa močno povezanih spremenljivk več. Odstranitev spremenljivke $X_3$ nima večjega vpliva na pokritost, dobimo pa nekoliko ožje intervale zaupanja. Večji vpliv ima odstranitev spremenljivke $X_2$, ki ima dejanski vpliv na odvisno spremenljivko. V splošnem so intervali zaupanja v primeru izključene spremenljivke pri višji korelaciji ožji kot v polnem modelu, vendar pa ne smemo pozabiti, da je v primeru izključitve $X_2$ zato slabša pokritost.
+
+Opazimo namreč lahko, da se pokritost v primeru modela `glm_x2` ne spremeni bistveno, ko med pojasnjevalnimi spremenljivkami ni prisotne korelacije, nato pa se močno zmanjša z naraščanjem korelacije ter ponovno nekoliko zraste v primeru zelo močne povezanosti ($korelacija=0.9$). Še vedno pa je pokritost v vseh primerih, ko je prisotna povezanost pojasnjevalnih spremenljivk, nižja od ostalih dveh modelov in tudi nižja od pričakovane. 
 
 Najboljši model dobimo, ko izključimo $X_3$, ki nima vpliva, saj imamo podobno pokritost kot pri polnem modelu, a ožji interval zaupanja. V naslednjih tabelah, ki potrjujo naša opažanja, si lahko bolje ogledamo dejanske številke.
 
@@ -825,7 +809,7 @@ Z večanjem velikosti vzorca pri polnih modelih dobimo večjo pokritost pri \emp
 Pri dovolj velikih vzorcih (tu izvzamemo $n=10$) ima \emph{glm} nekoliko boljšo pokritost, a širše intervale zaupanja, kot \emph{lm} model.
 Pri najmanjšem opazovanem vzorcu ($n=10$) se pristop z \emph{lm} funkcijo izkaže za bolj učinkovitega pri pokritosti a slabšega pri širini intervalov zaupanja.
 
-Pri večji asimetriji porazdelitve pojasnjevalnih spremenljivk dobimo nekoliko širše intervale zaupanja kot pri bolj simetrični porazdelitvi. Pri bolj simetrični porazdelitvi $Gamma(5,5)$ so tudi razlike med pristopoma z \emph{glm} in \emph{lm} manjše.Ob vsakem primeru pa velja, da se (procentualna) razlika v širini z večanjem velikosti vzorca povečuje v prid modela \emph{glm}.
+Pri večji asimetriji porazdelitve pojasnjevalnih spremenljivk dobimo nekoliko širše intervale zaupanja kot pri bolj simetrični porazdelitvi. Pri bolj simetrični porazdelitvi $Gamma(5,5)$ so tudi razlike med pristopoma z \emph{glm} in \emph{lm} manjše. Ob vsakem primeru pa velja, da se (procentualna) razlika v širini z večanjem velikosti vzorca povečuje v prid modela \emph{glm}.
 
 Večja korelacija med pojasnjevalnimi spremenljivkami poveča širino intervalov zaupanja regresijskih koeficientov, na pokritosti pa nima večjega vpliva. Izjema so modeli brez spremenljivke $X_2$.
 Asimetrija porazdelitve ostankov na ocene regresijskih koeficientov nima posebnega vpliva. V primeru logaritemske transformacije smo opazili, da se širina IZ z večanjem $\alpha$ (v $Gamma(\alpha, 5)$ porazdelitvi ostankov) povečuje, vendar pa to lahko pripišemo le vplivu večje variance in ne asimetrije.
@@ -842,7 +826,7 @@ Pri modelih z logaritemsko transformacijo se je pristop s funkcijo \emph{lm} izk
 V modelih z logaritemsko transformacijo nobena od obravnavanih spremenljivk ne pojasni omembe vrednega deleža variabilnosti pokritosti IZ. Z določenimi spremenljivkami pa lahko pojasnimo večji delež variabilnosti širine IZ -  te spremenljivke so velikost vzorca, korelacija, porazdelitev ostankov (varianca ostankov) in nekatere interakcije.
 Omeniti je še smiselno, da smo pri manj asimetrični porazdelitvi pojasnjevalnih spremenljivk $Gamma(5,5)$ dobili ožje intervale zaupanja regresijskih koeficientov.
 
-Če pogledamo vse ugotovitve skupaj, lahko sklenemo, da če nimamo opravka s transformacijami, če imamo dovolj velik vzorec in če imamo gama porazdelitev ostankov, ima \emph{glm} model boljšo pokritost intervalov zaupanja, a na račun širših intervalov zaupanja. V primeru transformacije odzivne spremenljivke je bolj smiselno izbrati pristop, kjer že v vpisani formuli transformiramo odzivno spremenljivko, namesto da le to upoštevamo v $link$ parametru funkcije \emph{glm}. Seveda pa v praksi dobimo podatke, pri katerih sprva ne vemo, s kakšnimi transformacijami imamo opravka. V splošnem lahko rečemo, da je pristop z \emph{lm} modelom povsem "konkurenčen" pristopu z \emph{glm}, razlike v ocenah regresijskih koeficientov so relativno majhne. Delo P. E. Johnsona, ki je prišel do nekaterih podobnih ugotovitev, potrjuje naše sklepe. Sam je sklenil, da gama porazdelitev ostankov le redkokdaj vpliva na ocene regresijskih koeficientov, kljub temu, da so kršene nekatere predpostavke.
+Če pogledamo vse ugotovitve skupaj, lahko sklenemo, da če nimamo opravka s transformacijami, če imamo dovolj velik vzorec in če imamo gama porazdelitev ostankov, ima \emph{glm} model boljšo pokritost intervalov zaupanja, a na račun širših intervalov zaupanja. V primeru transformacije odzivne spremenljivke je bolj smiselno izbrati pristop, kjer že v vpisani formuli transformiramo odzivno spremenljivko, namesto da le to upoštevamo v $link$ parametru funkcije \emph{glm}. Seveda pa v praksi dobimo podatke, pri katerih sprva ne vemo, s kakšnimi transformacijami imamo opravka. V splošnem lahko rečemo, da je pristop z \emph{lm} modelom povsem "konkurenčen" pristopu z \emph{glm}, saj kljub minimalno nižji pokritosti v primeru brez tranformacij vseeno dosega željeno pokritost (razen v primerih, ko nobena metoda tega ne dosega) in ima pri tem ožje intervale zaupanja. Delo P. E. Johnsona, ki je prišel do nekaterih podobnih ugotovitev, potrjuje naše sklepe. Sam je sklenil, da gama porazdelitev ostankov le redkokdaj vpliva na ocene regresijskih koeficientov, kljub temu, da so kršene nekatere predpostavke.
 
 # Viri
 
