@@ -45,7 +45,7 @@ library(corrplot)
 Obravnavana metoda je linearna regresija in zanima nas, kako kršenje predpostavk (konkretneje nenormalna porazdelitev ostankov in močna korelacija med pojasnjevalnimi spremenljivkami) vpliva na njene rezultate.
 Preverjali bomo vpliv različnih dejavnikov na pristranost in širino intervalov zaupanja regresijskih koeficientov.
 Ti dejavniki so velikost vzorca, moč korelacije med pojasnjevalnimi spremenljivkami, asimetrija porazdelitve ostankov, asimetrija porazdelitve pojasnjevalnih spremenljivk ter število vključenih spremenljivk v modelu.
-Poleg tega bomo preverjali, če probleme kršenja predpostavk lahko (vsaj delno) odpravimo z uporabo posplošenih linearnih modelov. Ob koncu naloge bomo preverili še, kako dobro se \emph{link} funkcija v posplošenih modelih obnese v primeru logaritemske transoformacije pojasnjevalne spremenljivke.
+Poleg tega bomo preverjali, če probleme kršenja predpostavk lahko (vsaj delno) odpravimo z uporabo posplošenih linearnih modelov. Ob koncu naloge bomo preverili še, kako dobro se \emph{link} funkcija v posplošenih modelih obnese v primeru logaritemske transformacije odzivne spremenljivke.
 
 # Teoretični del
 
@@ -78,7 +78,7 @@ $$y_i = \beta_0 + \beta_1x_{i1} + \beta_2x_{i2} + \cdots + \beta_{p-1}x_{i,p-1} 
 kjer velja $\epsilon_i\sim N(0,\sigma^2)$.
 
 Parametre v normalnem linearnem modelu lahko ocenjujemo z metodo najmanjših kvadratov ali pa z metodo največjega verjetja, kjer maksimiziramo log-verjetnostno funkcijo.
-V našem primeru bomo za ocenjevanje parametrov pri linearni regresiji uporabljali funkcijo `lm`, ki v splošnem uporablja osnovno metodo najmanjših kvadratov (MNK ali angleško OLS), zato v je v nadaljevanju podrobneje predstavljena samo ta metoda.
+V našem primeru bomo za ocenjevanje parametrov pri linearni regresiji uporabljali funkcijo `lm`, ki v splošnem uporablja osnovno metodo najmanjših kvadratov (MNK ali ang. OLS), zato v je v nadaljevanju podrobneje predstavljena samo ta metoda.
 
 Metodo najmanjših kvadratov je pri 16 letih odkril nemški matematik Carl F. Gauss. Zaradi svojih lastnosti je najbolj razširjena metoda ocenjevanja regresijskih koeficientov 
 (Pfajfar, 2018, str.53).
@@ -119,34 +119,34 @@ Komponente posplošenih linearnih modelov so tako:
 - Slučajna komponenta: $y_i$, $i=1,\dots,n$, so neodvisne spremenljivke z gostoto iz eksponentne družine: $$f(y|\theta,\phi)=exp\left\{\frac{y \theta - b(\theta)}{\phi}+c(y,\phi)\right\},$$ kjer je $\phi>0$ disperzijski parameter in $b(.)$, $c(.)$ znani funkciji, $\theta$ pa je naravni (kanonični) parameter. 
 - Sistematična komponenta: $\eta_i=\eta_i(\beta) = x_i^T\beta$ je linearni prediktor, kjer je $\beta$ vektor neznanih regresijskih parametrov. 
 
-- Parametrične link komponente: Link fukncija opisuje kako je povprečje $E[Y_i] = \mu_i$ odvisno od linearnega prediktorja: $$g(\mu_i) = \eta_i$$ oz. naravna (kanonična) link funcija, če velja $\theta=\eta$. 
+- Parametrične link komponente: Link funkcija opisuje, kako je povprečje $E[Y_i] = \mu_i$ odvisno od linearnega prediktorja: $$g(\mu_i) = \eta_i$$ oz. naravna (kanonična) link funkcija, če velja $\theta=\eta$. 
 
-- Funkcija variance: opisuje kako je varianca $Var[Y_i]$ odvisna od povprečja $Var[Y_i] = \theta V(\mu)$
+- Funkcija variance: opisuje, kako je varianca $Var[Y_i]$ odvisna od povprečja $Var[Y_i] = \theta V(\mu)$
 
 Za reševanje problema se uporablja metoda največjega verjetja, kjer zapišemo log-verjetje:
 
 $$\ell(\mu|y) = \sum_{i=1}^n\left(\frac{y_i \theta_i - b(\theta_i)}{\phi}+c(y_i,\phi)\right)$$
 Cenilko $\hat{\mu}$ pridobimo z reševanjem t.i. "score" funkcije:
 
-$$s(\mu) = \frac{\partial}{\partial\mu}\ell(\mu|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu} = \left(\frac{y_1-\mu_1}{\phi V(\mu_1)}, \dots , \frac{y_n-\mu_n}{\phi V(\mu_n)}\right)$$.
+$$s(\mu) = \frac{\partial}{\partial\mu}\ell(\mu|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu} = \left(\frac{y_1-\mu_1}{\phi V(\mu_1)}, \dots , \frac{y_n-\mu_n}{\phi V(\mu_n)}\right).$$
 
 Ker velja $\mu = \mu(\beta)$, je score funkcija za parameter $\beta$ enaka:
 
-$$s(\beta) = \frac{\partial}{\partial\beta}\ell(\beta|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu}\frac{\partial\mu}{\partial\eta}\frac{\partial\eta}{\partial\beta} = \sum_{i=1}^n\frac{y_i-\mu_i}{\phi V(\mu_i)}\frac{1}{g'(\mu_i)}x_i$$.
+$$s(\beta) = \frac{\partial}{\partial\beta}\ell(\beta|y) = \frac{\partial}{\partial\theta}\ell(\mu|y)\frac{\partial\theta}{\partial\mu}\frac{\partial\mu}{\partial\eta}\frac{\partial\eta}{\partial\beta} = \sum_{i=1}^n\frac{y_i-\mu_i}{\phi V(\mu_i)}\frac{1}{g'(\mu_i)}x_i.$$
 
 Pogoj, ki ga dobimo je:
 
-$$\sum_{i=1}^n\frac{y_i-\hat{\mu_i}}{V(\hat{\mu_i})}\frac{1}{g'(\hat{\mu_i})}x_i=0$$,
+$$\sum_{i=1}^n\frac{y_i-\hat{\mu_i}}{V(\hat{\mu_i})}\frac{1}{g'(\hat{\mu_i})}x_i=0,$$
 
 ki je neodvisen od disperzijskega parametra in velja $g(\hat{\mu_i}) = x^T\hat{\beta}$. 
 
-Splošna metoda za rešitev enačbe je iterativni algoritem Fisherjeva metoda točkovanja (ang. Fisher’s Method of Scoring). V metodi je v k-ti iteraciji nova ocena $\beta^{(k+1)}$ pridobljena iz prejšne ocene z:
+Splošna metoda za rešitev enačbe je iterativni algoritem Fisherjeva metoda točkovanja (ang. Fisher’s Method of Scoring). V metodi je v k-ti iteraciji nova ocena $\beta^{(k+1)}$ pridobljena iz prejšnje ocene z:
 
 $$\beta{(k+1)} = \beta^{(k)} + s(\beta^{(k)})\left[E\left[\frac{\partial s(\beta)}{\partial \beta}\right]\Biggr|_{\beta=\beta^{(k)}}\right]^{-1}.$$
 
 Pokazati se da, da je lahko ta iteracija preoblikovana v:
 
-$$\beta^{(k+1)} = (X^TW^{(k)}X)^{-1}X^TW^{(k)}z^{(k)}$$,
+$$\beta^{(k+1)} = (X^TW^{(k)}X)^{-1}X^TW^{(k)}z^{(k)},$$
 
 kjer sta vektor $z$ in matrika uteži $W$ definirana kot:
 
@@ -167,7 +167,7 @@ Tako oceno $\hat{\beta}$ izračunamo iterativno z uteženimi najmanjšimi kvadra
 3. izračunamo $\beta^{(k+1)}$ z uteženimi najmanjšimi kvadrati
 4. ponavljamo koraka $2$ in $3$, dokler ne dosežemo konvergence
 
-(Celotna metoda reševanja povzeta po Turner, 2008)
+Celotna metoda reševanja je povzeta po Turner, 2008.
 
 
 # Generiranje podatkov
@@ -232,7 +232,7 @@ Funkcija \emph{lm()} se uporablja za ocenjevanje linearnih modelov. Avtomatično
 (lm iz RDocumentation, 2020). V tej seminarski nalogi uporabljamo samo osnovno metodo najmanjših kvadratov.
 
 V linearnem modelu $Y_i = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip} + \epsilon_{i}$ velja
-$E(Y_i) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$. Slednjo enačbo lahko z uporabo primerno definirane funkcije $g$ posplošimo do $$g(E(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}.$$ Tu z indeksom $i$ označujemo i-tega posameznika. Prejšnja enačba je poseben primer, kjer je $g$ identiteta.
+$E(Y_i) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}$. Slednjo enačbo lahko z uporabo primerno definirane funkcije $g$ posplošimo do $$g(E(Y_i)) = \beta_0 + \beta_1  X_{i1} + ... + \beta_p X_{ip}.$$ Prejšnja enačba je poseben primer, kjer je $g$ identiteta.
 Z uporabo funkcije \emph{glm()} in znotraj primerno definirane funkcije $g$ lahko generiramo več posplošenih linearnih modelov. Prednost te funkcije je tudi v tem, da lahko poleg normalne porazdelitve nastavimo še katero drugo porazdelitev ostankov. To naredimo tako, da npr. v primeru gama porazdelitve ostankov znotraj funkcije \emph{glm()} definiramo \emph{family=Gamma(link="identity")}. Tu \emph{identity} pomeni, da za funkcijo \emph{g} vzamemo kar identiteto, možne izbire pa so še \emph{log}, \emph{inverse}, \emph{logit} in druge (možna je tudi nova definicija). Parameter \emph{family} določa porazdelitev ostankov. Na voljo imamo normalno, binomsko, gama, inverzno normalno, Poissonovo, kvazi (poleg \emph{link} funkcije nastavimo še varianco), kvazi-binomsko in kvazi-Poissonovo. Funkcija \emph{glm} parametre modela ocenjuje po metodi iterativnega uteženega povprečja najmanjših kvadratov
 (glm iz RDocumentation, 2020).
 
@@ -243,11 +243,10 @@ Pri izračunih intervalov zaupanja uporabimo funkciji \emph{confint} in \emph{co
 ## Skaliranje variance
 
 Ker zaradi spreminjanja parametrov v gama porazdelitvi ne spreminjamo samo asimetričnosti, ampak tudi varianco in ker vemo, da ima velikost variance vpliv na model, smo spremenljivke napak skalirali. Napake smo skalirali tako, da smo vrednosti delili s teoretično standardno napako in tako poskrbeli, da imajo vse porazdelitve napak enako varianco. 
+Podrobnejši pregled gama porazdelitve z vsemi dokazi je pripravil K. Siegrist (2020). Če je spremenljivka $X$ porazdeljena po $Gamma(\alpha, \beta)$, je njena varianca enaka $\frac{\alpha}{\beta^2}$. Za to spremenljivko in neko konstanto $c$ velja $cX \sim Gamma(\alpha, \frac{\beta}{c})$. To lastnost uporabimo pri skaliranju variance in sicer tako, da vrednosti delimo s $\sqrt{\frac{\alpha}{\beta^2}}=\frac{\sqrt{\alpha}}{\beta}$. Tako dobimo skalirano spremenljivko $\frac{\beta}{\sqrt{\alpha}}X \sim Gamma(\alpha, \sqrt{\alpha})$.
 
-Podrobnejši pregled gama porazdelitve z vsemi dokazi je pripravil K. Siegrist (2020). Če je spremenljivka $X$ porazdeljena po $Gamma(\alpha, \beta)$, je njena pričakovana vrednost enaka $\frac{\alpha}{\beta}$, varianca pa $\frac{\alpha}{\beta^2}$. Za to spremenljivko in neko konstanto $c$ velja $cX \sim Gamma(\alpha, \frac{\beta}{c})$. To lastnost uporabimo pri skaliranju variance in sicer tako, da vrednosti delimo s $\sqrt{\frac{\alpha}{\beta^2}}=\frac{\sqrt{\alpha}}{\beta}$. Tako dobimo skalirano spremenljivko $\frac{\beta}{\sqrt{\alpha}}X \sim Gamma(\alpha, \sqrt{\alpha})$.
-
-```{r fig.cap="Skalirane porazdelitve ostankov"}
-par(mfrow=c(2,2))
+```{r fig.cap="Skalirane porazdelitve ostankov", fig.height=3.2, fig.width=5.8}
+par(mfrow=c(2,2), mar=c(4.1, 4.1, 2.1, 1.1))
 
 y <- dgamma(x,1,sqrt(2))
 plot(x,y, main = expression(paste("gamma(1,",sqrt(1),")",sep='')))
@@ -275,6 +274,8 @@ V primeru, ko izločimo spremenljivko $X_2$, pa pričakujemo večje spremembe v 
 Porazdelitev pojasnjevalnih spremenljivk preverimo za dve porazdelitvi - $Gamma(2,5)$, ki je precej asimetrična in $Gamma(5,5)$, ki je zelo podobna normalni porazdelitvi. Zanima nas, če in kako asimetrija pojasnjevalnih spremenljivk vpliva na ocene regresijskih koeficientov. Pričakujemo, da bo v primeru asimetrične porazdelitve prišlo do manjše pokritosti in večje širine intervalov zaupanja.
 
 V primeru transformacij pričakujemo podobne rezultate med metodama \emph{lm} in \emph{glm}, morda boljše pri slednji. Prednost \emph{glm} je v tem, da lahko nastavimo gama porazdelitev ostankov, za \emph{link} funkcijo pa pričakujemo, da se bo obnesla približno tako dobro kot logaritemska transformacija formule v \emph{lm} funkciji.
+
+\pagebreak
 
 # Predstavitev rezultatov
 
@@ -351,6 +352,8 @@ Zanimivo je dejstvo, da ima samo pri majhnem vzorcu ($n=10$) metoda \emph{ols} �
 
 Za manjše število izbranih parametrov $n$ in korelacije so rezultati prikazani tudi v spodnjih dveh tabelah, kjer lažje razberemo razlike. Prikazane razlike so v obeh primerih razlike \emph{glm} glede na \emph{ols} metodo, v tabeli s širino intervalov zaupanja so prikazane še razlike v deležu glede na širino intervala zaupanja pri metodi \emph{ols}.
 
+\pagebreak
+
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('ols','glm'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
@@ -366,7 +369,7 @@ sirina1$razlika_pct <- (sirina1$razlika/sirina1$ols) %>% round(2)
 kable(sirina1, booktabs = F, align = "c", caption = "Širina intervalov zaupanja za koeficient $\\beta_1$ pri polnem modelu in $Gamma(2,5)$ porazdelitvi pojasnjevalnih spremenljivk")
 ```
 
-Velja torej, da ima v povprečju \emph{glm} metoda od 1 do 2 ostotni točki boljšo pokritost (z izjemo najmanjšega opazovanega vzorca), vendar pa ima tudi do $14\%$ širše intervale zaupanja. Ta razlika med intervali zaupanja se najbolj poveča z večanjem velikosti vzorca. Visoka korelacija v kombinaciji z majhnim vzorcem je najbolj problematična, saj imamo tam tako manjšo pokritost kot tudi precej široke intervale zaupanja. 
+Velja torej, da ima v povprečju \emph{glm} metoda od 1 do 2 odstotni točki boljšo pokritost (z izjemo najmanjšega opazovanega vzorca), vendar pa ima tudi do $14\%$ širše intervale zaupanja. Ta razlika med intervali zaupanja se najbolj poveča z večanjem velikosti vzorca. Visoka korelacija v kombinaciji z majhnim vzorcem je najbolj problematična, saj imamo tam tako manjšo pokritost kot tudi precej široke intervale zaupanja. 
 
 
 ### Manj asimetrična porazdelitev pojasnjevalnih spremenljivk
@@ -437,11 +440,11 @@ ggplot(data_sirina %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable ==
   labs(x = expression(paste("Stopnja asimetrije ostankov (", alpha, ")", sep='')), y = "sirina IZ")
 ```
 
-Pri majhnem vzorcu ni velikih razlik pri pokritosti glede na model, je pa predvsem ob prisotnosti višje korelacije nekaj razlik v širini intervalov zapanja. Z večanjem korelacije ima polni model širše intervale zaupanja, kar je posledica multikolinearnosti, zaradi katere imajo ocene regresijskih koeficientov večje standardne napake, v polnem modelu pa močno povezanih spremenljivk več. Odstranitev spremenljivke $X_3$ nima večjega vpliva na pokritost, dobimo pa nekoliko ožje intervale zaupanja. Večji vpliv ima odstranitev spremenljivke $X_2$, ki ima dejanski vpliv na odvisno spremenljivko. V splošnem so intervali zaupanja v primeru izključene spremenljivke pri višji korelaciji ožji kot v polnem modelu, vendar pa ne smemo pozabiti, da je v primeru izključitve $X_2$ zato slabša pokritost.
+Pri majhnem vzorcu ni velikih razlik pri pokritosti glede na model, je pa predvsem ob prisotnosti višje korelacije nekaj razlik v širini intervalov zaupanja. Z večanjem korelacije ima polni model širše intervale zaupanja, kar je posledica multikolinearnosti, zaradi katere imajo ocene regresijskih koeficientov večje standardne napake, v polnem modelu pa je močno povezanih spremenljivk več. Odstranitev spremenljivke $X_3$ nima večjega vpliva na pokritost, dobimo pa nekoliko ožje intervale zaupanja. Večji vpliv ima odstranitev spremenljivke $X_2$, ki ima dejanski vpliv na odvisno spremenljivko. V splošnem so intervali zaupanja v primeru izključene spremenljivke pri višji korelaciji ožji kot v polnem modelu, vendar pa ne smemo pozabiti, da je v primeru izključitve $X_2$ zato slabša pokritost.
 
-Opazimo namreč lahko, da se pokritost v primeru modela `glm_x2` ne spremeni bistveno, ko med pojasnjevalnimi spremenljivkami ni prisotne korelacije, nato pa se močno zmanjša z naraščanjem korelacije ter ponovno nekoliko zraste v primeru zelo močne povezanosti ($korelacija=0.9$). Še vedno pa je pokritost v vseh primerih, ko je prisotna povezanost pojasnjevalnih spremenljivk, nižja od ostalih dveh modelov in tudi nižja od pričakovane. 
+Opazimo lahko, da se pokritost v primeru modela `glm_x2`, ko med pojasnjevalnimi spremenljivkami ni prisotne korelacije, ne spremeni bistveno. Z naraščanjem korelacije se močno zmanjša ter ponovno nekoliko zraste v primeru zelo močne povezanosti ($korelacija=0.9$). Še vedno pa je pokritost v vseh primerih, ko je prisotna korelacija med pojasnjevalnimi spremenljivkami, nižja od ostalih dveh modelov in tudi nižja od željene pokritosti.
 
-Najboljši model dobimo, ko izključimo $X_3$, ki nima vpliva, saj imamo podobno pokritost kot pri polnem modelu, a ožji interval zaupanja. V naslednjih tabelah, ki potrjujo naša opažanja, si lahko bolje ogledamo dejanske številke.
+Najboljši model dobimo, ko izključimo $X_3$, ki nima vpliva, saj imamo podobno pokritost kot pri polnem modelu, a ožji interval zaupanja. V naslednjih tabelah, ki potrjujejo naša opažanja, si lahko bolje ogledamo dejanske številke.
 
 ```{r}
 pokritost1 <- data_pokritost %>% filter(model %in% c('glm','glm_x2','glm_x3'), variable == 'pokritost_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>% 
@@ -522,6 +525,8 @@ pokritost1 <- data_pokritost %>% filter(model %in% c('ols_x3','glm_x3'), variabl
 pokritost1$razlika <- pokritost1$glm_x3 - pokritost1$ols_x3
 kable(pokritost1, booktabs = F, align = "c", caption = "Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri modelu brez $X_3$ in $Gamma(2,5)$ porazdelitvi pojasnjevalnih spremenljivk")
 ```
+
+\pagebreak
 
 ```{r}
 sirina1 <- data_sirina %>% filter(model %in% c('ols_x3','glm_x3'), variable == 'sirina_B1', alpha_X==2, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
@@ -631,6 +636,8 @@ pokritost1$razlika <- pokritost1$glm_x3 - pokritost1$ols_x3
 kable(pokritost1, booktabs = F, align = "c", caption = "Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri modelu brez $X_3$ in $Gamma(5,5)$ porazdelitvi pojasnjevalnih spremenljivk")
 ```
 
+\pagebreak
+
 ```{r}
 sirina1 <- data_sirina %>% filter(model %in% c('ols_x3','glm_x3'), variable == 'sirina_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
@@ -656,6 +663,8 @@ plot(eta_squared(model1))
 Iz zgornjega grafa lahko razberemo, da nobena od spremenljivk ne pojasni velikega deleža variabilnosti v pokritosti intervalov zaupanja. Vseeno pa je kar nekaj takih, ki pojasnijo manjši del in imajo statistično značilen vpliv (to nam pove povzetek modela anove, ki je v prilogi naloge).
 Na začetku model pojasni $9\%$ variabilnosti pokritosti intervala zaupanja. Za tem velikost vzorca pojasni $4\%$ preostale variabilnosti in korelacija še dodatna $2\%$. Asimetričnost ostankov za tem dodatno ne pojasni nič variabilnosti. Nekoliko večji del variabilnosti (glede na ostale vplive) dodatno pojasnijo še interakcija med modelom in velikostjo vzorca ($10\%$), interakcija med modelom in korelacijo ($4\%$), interakcija med korelacijo in velikostjo vzorca ($2\%$) ter na koncu še interakcija modela, velikosti vzorca in korelacije ($4\%$).
 
+\pagebreak
+
 Pri tem se moramo zavedati, da znotraj spremenljivke `model` nista samo \emph{glm} ali \emph{lm}, ampak so upoštevani še nepolni modeli. To poudarimo zato, ker je učinek najverjetneje posledica nepolnih modelov. Tudi v prejšnjih prikazih smo zaznali vpliv sledečih modelov, medtem ko med \emph{lm} in \emph{glm} modeloma nismo opazili razlik.
 Vpliv variabilnosti in velikost vzorca smo prav tako zaznali že iz prejšnjih grafov, analiza variance in velikost učinka pa nam naša opažanja še dodatno potrdita. 
 Poglejmo si še velikost učinka pri analizi variance za širino intervalov zaupanja.
@@ -669,9 +678,11 @@ plot(eta_squared(model2))
 Opazimo, da ni toliko spremenljivk, ki bi pojasnjevale variabilnost širine intervalov zaupanja, vendar le te pojasnijo večji del variabilnosti. $55\%$ variabilnost opazovane spremenljivke pojasni velikost vzorca, od preostale variabilnosti pa $16\%$ pojasni korelacija med neodvisnimi spremenljivkami. Model in asimetričnost ostankov dodatno ne pojasnita večjega dela variabilnosti širine intervala zaupanja, dodatnih $16\%$ pa pojasnjuje še interakcija med velikostjo vzorca in korelacijo. Manjši del variabilnosti dodatno pojasni še interakcija med velikostjo vzorca in modelom ($2\%$), ostale interakcije pa zanemarljivo majhne deleže.
 Ponovno nam prikaz in analiza variance potrjujeta naša predhodna opazovanja. 
 
+\pagebreak
+
 ## Transformacija odzivne spremenljivke
 
-V tem poglavju so predstavljeni še rezultati simulacij, kjer je uporabljena logaritemska tranformacija.
+V tem poglavju so predstavljeni še rezultati simulacij, kjer je uporabljena logaritemska transformacija.
 Pri teh simulacijah nas je zanimala predvsem razlika med uporabo transformacije $log(Y)$ v formuli funkcije \emph{lm} ($log(Y)=\beta X$) in uporabo logaritemske link funkcije ($link="log"$) v funkciji \emph{glm}. Vseeno pa si bomo pogledali tudi razlike med rezultati pri različnih parametrih.
 
 ```{r}
@@ -767,6 +778,8 @@ pokritost1$razlika <- pokritost1$glm - pokritost1$ols
 kable(pokritost1, booktabs = F, align = "c", caption = "Pokritost intervalov zaupanja za koeficient $\\beta_1$ pri $X_i \\sim Gamma(5,5)$")
 ```
 
+\pagebreak
+
 ```{r}
 sirina1 <- data_sirina %>% filter(model %in% c('ols','glm'), variable == 'sirina_B1', alpha_X==5, n %in% c(10,100,1000), korelacija %in% c(0.3, 0.9)) %>%
   dcast(n+korelacija~model, value.var = 'value', fun.aggregate=mean) %>% round(2)
@@ -826,7 +839,9 @@ Pri modelih z logaritemsko transformacijo se je pristop s funkcijo \emph{lm} izk
 V modelih z logaritemsko transformacijo nobena od obravnavanih spremenljivk ne pojasni omembe vrednega deleža variabilnosti pokritosti IZ. Z določenimi spremenljivkami pa lahko pojasnimo večji delež variabilnosti širine IZ -  te spremenljivke so velikost vzorca, korelacija, porazdelitev ostankov (varianca ostankov) in nekatere interakcije.
 Omeniti je še smiselno, da smo pri manj asimetrični porazdelitvi pojasnjevalnih spremenljivk $Gamma(5,5)$ dobili ožje intervale zaupanja regresijskih koeficientov.
 
-Če pogledamo vse ugotovitve skupaj, lahko sklenemo, da če nimamo opravka s transformacijami, če imamo dovolj velik vzorec in če imamo gama porazdelitev ostankov, ima \emph{glm} model boljšo pokritost intervalov zaupanja, a na račun širših intervalov zaupanja. V primeru transformacije odzivne spremenljivke je bolj smiselno izbrati pristop, kjer že v vpisani formuli transformiramo odzivno spremenljivko, namesto da le to upoštevamo v $link$ parametru funkcije \emph{glm}. Seveda pa v praksi dobimo podatke, pri katerih sprva ne vemo, s kakšnimi transformacijami imamo opravka. V splošnem lahko rečemo, da je pristop z \emph{lm} modelom povsem "konkurenčen" pristopu z \emph{glm}, saj kljub minimalno nižji pokritosti v primeru brez tranformacij vseeno dosega željeno pokritost (razen v primerih, ko nobena metoda tega ne dosega) in ima pri tem ožje intervale zaupanja. Delo P. E. Johnsona, ki je prišel do nekaterih podobnih ugotovitev, potrjuje naše sklepe. Sam je sklenil, da gama porazdelitev ostankov le redkokdaj vpliva na ocene regresijskih koeficientov, kljub temu, da so kršene nekatere predpostavke.
+Če pogledamo vse ugotovitve skupaj, lahko sklenemo, da če nimamo opravka s transformacijami, če imamo dovolj velik vzorec in če imamo gama porazdelitev ostankov, ima \emph{glm} model boljšo pokritost intervalov zaupanja, a na račun širših intervalov zaupanja. V primeru transformacije odzivne spremenljivke je bolj smiselno izbrati pristop, kjer že v vpisani formuli transformiramo odzivno spremenljivko, namesto da le to upoštevamo v $link$ parametru funkcije \emph{glm}. Seveda pa v praksi dobimo podatke, pri katerih sprva ne vemo, s kakšnimi transformacijami imamo opravka. V splošnem lahko rečemo, da je pristop z \emph{lm} modelom povsem "konkurenčen" pristopu z \emph{glm}, saj kljub minimalno nižji pokritosti v primeru brez transformacij vseeno dosega željeno pokritost (razen v primerih, ko nobena metoda tega ne dosega) in ima pri tem ožje intervale zaupanja. Delo P. E. Johnsona, ki je prišel do nekaterih podobnih ugotovitev, potrjuje naše sklepe. Sam je sklenil, da gama porazdelitev ostankov le redkokdaj vpliva na ocene regresijskih koeficientov, kljub temu, da so kršene nekatere predpostavke.
+
+\pagebreak
 
 # Viri
 
@@ -853,19 +868,22 @@ Omeniti je še smiselno, da smo pri manj asimetrični porazdelitvi pojasnjevalni
 
 - K. Siegrist, \emph{5.8. The Gama Distribution}, [ogled 20.01.2021], dostopno na \url{https://stats.libretexts.org/Bookshelves/Probability_Theory/Book%3A_Probability_Mathematical_Statistics_and_Stochastic_Processes_(Siegrist)/05%3A_Special_Distributions/5.08%3A_The_Gamma_Distribution}
 
-- R. Lockhart, \empf{STAT 350: Estimating Eauations}, [ogled 21.1.2021], dostopno na \url{https://www.sfu.ca/~lockhart/richard/350/08_2/lectures/GLMTheory/web.pdf}
+- R. Lockhart, \emph{STAT 350: Estimating Eauations}, [ogled 21.1.2021], dostopno na \url{https://www.sfu.ca/~lockhart/richard/350/08_2/lectures/GLMTheory/web.pdf}
 
-- spletni vir, [ogled 21.1.2021], dostopno na \url{https://www.sagepub.com/sites/default/files/upm-binaries/21121_Chapter_15.pdf}
+- \emph{Generalized Linear Models}, v: Sage Publishing, [ogled 21.1.2021], dostopno na \url{https://www.sagepub.com/sites/default/files/upm-binaries/21121_Chapter_15.pdf}
 
-- H. Turner, \empf{Introduction to Generalized Linear Models}, [ogled 22.1.2021], dostopno na \url{http://statmath.wu.ac.at/courses/heather_turner/glmCourse_001.pdf}
+- H. Turner, \emph{Introduction to Generalized Linear Models}, [ogled 22.1.2021], dostopno na \url{http://statmath.wu.ac.at/courses/heather_turner/glmCourse_001.pdf}
 
-- A. Bhandari, \empf{What is Multicollinearity? Here’s Everything You Need to Know}, [ogled 18.1.2021], dostopno na \url{https://www.analyticsvidhya.com/blog/2020/03/what-is-multicollinearity/}
+- A. Bhandari, \emph{What is Multicollinearity? Here’s Everything You Need to Know}, [ogled 18.1.2021], dostopno na \url{https://www.analyticsvidhya.com/blog/2020/03/what-is-multicollinearity/}
+
 
 # Priloge
 
 Koda za simulacije brez transformacij se nahaja v priloženi datoteki `Simulacije.R`, njeni rezultati pa v datoteki `rezultati_simulacije.R`.
 Koda za simulacije s transformacijami se nahaja v priloženi datoteki `Simulacije_log.R`, njeni rezultati pa v datoteki `rezultati_simulacije_log.R`.
 Poročilo je bilo pripravljeno v `seminarska_RZM.Rmd` datoteki, ki vsebuje tudi kodo za grafe. Za pravilen prevod Rmd datoteke je potrebno v isti mapi imeti datoteko `header.tex`, ki poskrbi za lepši prevod datoteke (slovenski naslovi slik, tabel in podobno).
+
+\pagebreak
 
 Sledi izpis ANOVE za pokritost intervalov zaupanja pri modelu brez transformacije.
 
@@ -878,6 +896,8 @@ Sledi izpis ANOVE za širino intervalov zaupanja pri modelu brez transformacije.
 ```{r}
 summary(model2)
 ```
+
+\pagebreak
 
 Sledi izpis ANOVE za pokritost intervalov zaupanja pri modelu s transformacijo.
 
